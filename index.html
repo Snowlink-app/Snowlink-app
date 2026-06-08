@@ -4,17 +4,16 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
 <meta name="apple-mobile-web-app-title" content="Snowlink"/>
 <title>Snowlink</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F5F7FA;color:#1a1a1a;min-height:100vh;}
 .app{max-width:600px;margin:0 auto;padding:0 0 80px;}
 .header{background:#fff;border-bottom:0.5px solid #e0e0e0;padding:12px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
 .logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#185FA5,#0F6E56);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.logo svg{display:block;}
-.app-title{font-size:17px;font-weight:600;color:#1a1a1a;letter-spacing:-.3px;}
+.app-title{font-size:17px;font-weight:600;color:#1a1a1a;}
 .app-sub{font-size:11px;color:#888;margin-top:1px;}
 .sync-bar{display:flex;align-items:center;gap:6px;font-size:11px;color:#888;padding:6px 16px;background:#fff;border-bottom:0.5px solid #f0f0f0;}
 .dot{width:7px;height:7px;border-radius:50%;background:#0F6E56;flex-shrink:0;}
@@ -30,26 +29,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .card{background:#fff;border:0.5px solid #e8e8e8;border-radius:12px;padding:14px 16px;margin-bottom:12px;}
 label{font-size:12px;color:#666;display:block;margin-bottom:5px;margin-top:11px;}
 label:first-child{margin-top:0;}
-input[type=date],input[type=text],input[type=tel],input[type=password],input[type=url]{width:100%;padding:9px 11px;border-radius:8px;border:0.5px solid #ddd;background:#fafafa;color:#1a1a1a;font-size:14px;-webkit-appearance:none;}
+input{width:100%;padding:9px 11px;border-radius:8px;border:0.5px solid #ddd;background:#fafafa;color:#1a1a1a;font-size:14px;-webkit-appearance:none;}
 input:focus{outline:none;border-color:#185FA5;background:#fff;}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:8px;border:none;cursor:pointer;font-size:14px;font-weight:500;transition:all .12s;-webkit-tap-highlight-color:transparent;}
-.btn-primary{background:#185FA5;color:#fff;}
-.btn-primary:active{background:#0C447C;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:8px;border:none;cursor:pointer;font-size:14px;font-weight:500;margin-top:10px;}
 .btn-green{background:#0F6E56;color:#fff;}
-.btn-green:active{background:#085041;}
+.btn-primary{background:#185FA5;color:#fff;}
 .btn-ghost{background:#f0f0f0;color:#444;}
-.btn-ghost:active{background:#e0e0e0;}
 .btn-purple{background:#534AB7;color:#fff;}
-.btn-purple:active{background:#3C3489;}
 .btn-wa{background:#0F6E56;color:#fff;}
 .btn-sms{background:#185FA5;color:#fff;}
-.btn-danger{background:#FCEBEB;color:#791F1F;border:0.5px solid #F09595;}
-.btn-sm{padding:6px 10px;font-size:12px;}
+.btn-sm{padding:6px 10px;font-size:12px;margin-top:0;}
 .creneaux-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;}
-.cr-btn{padding:9px 10px;border-radius:8px;border:0.5px solid #e0e0e0;background:#fafafa;cursor:pointer;font-size:12px;color:#555;text-align:left;line-height:1.4;-webkit-tap-highlight-color:transparent;}
+.cr-btn{padding:9px 10px;border-radius:8px;border:0.5px solid #e0e0e0;background:#fafafa;cursor:pointer;font-size:12px;color:#555;text-align:left;line-height:1.4;}
 .cr-btn.sel{background:#E6F1FB;border-color:#185FA5;color:#0C447C;font-weight:500;}
-.cr-nom{font-size:12px;font-weight:500;}
+.cr-nom{font-size:12px;font-weight:500;display:block;}
 .cr-h{font-size:11px;opacity:.7;}
 .badge{font-size:10px;padding:2px 7px;border-radius:999px;display:inline-block;white-space:nowrap;font-weight:500;}
 .b-journee{background:#E1F5EE;color:#085041;}
@@ -63,13 +57,12 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
 .tag-nom{font-size:13px;font-weight:600;}
 .tag-d{font-size:11px;margin-top:3px;opacity:.85;}
 .empty{color:#aaa;font-size:13px;text-align:center;padding:2rem 1rem;}
-.profil-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;border:0.5px solid #ddd;cursor:pointer;font-size:13px;margin:3px;color:#555;-webkit-tap-highlight-color:transparent;}
-.profil-chip.sel{font-weight:500;}
+.profil-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;border:0.5px solid #ddd;cursor:pointer;font-size:13px;margin:3px;color:#555;}
 .hint{font-size:11px;color:#aaa;margin-top:5px;}
 .saved-item{display:flex;justify-content:space-between;align-items:flex-start;padding:9px 0;border-bottom:0.5px solid #f0f0f0;}
 .saved-item:last-child{border-bottom:none;}
 .del-btn{background:none;border:none;cursor:pointer;color:#ccc;padding:2px 6px;font-size:16px;}
-.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:200;white-space:nowrap;}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:200;}
 .toast.show{opacity:1;}
 .section-title{font-size:16px;font-weight:600;color:#1a1a1a;margin-bottom:14px;}
 .legend-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
@@ -79,16 +72,13 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
 .pin-screen{display:flex;flex-direction:column;align-items:center;padding:2rem 1rem;}
 .pin-inputs{display:flex;gap:12px;margin:1.5rem 0;}
 .pin-input{width:48px;height:56px;text-align:center;font-size:22px;font-weight:600;border-radius:10px;border:0.5px solid #ddd;background:#fafafa;color:#1a1a1a;}
-.pin-input:focus{outline:none;border-color:#534AB7;background:#fff;}
 .admin-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 8px;border-radius:999px;background:#EEEDFE;color:#3C3489;border:0.5px solid #AFA9EC;margin-left:8px;}
 .setup-box{background:#E6F1FB;border:0.5px solid #85B7EB;border-radius:10px;padding:12px 14px;margin-bottom:12px;}
 .wa-preview{background:#fafafa;border:0.5px solid #e8e8e8;border-radius:10px;padding:12px;margin-top:10px;font-size:12px;color:#555;white-space:pre-wrap;line-height:1.6;min-height:50px;}
 .btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
 </style>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css"/>
 </head>
 <body>
-
 <div class="app">
 
 <div class="header">
@@ -110,26 +100,25 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
   </div>
   <div>
     <div class="app-title">Snowlink</div>
-    <div class="app-sub">DisponibilitÃ©s ESF</div>
+    <div class="app-sub">Disponibilités ESF</div>
   </div>
 </div>
 
 <div class="sync-bar">
   <span class="dot loading" id="sync-dot"></span>
-  <span id="sync-label">Connexionâ€¦</span>
+  <span id="sync-label">Connexion...</span>
 </div>
 
 <div class="tabs">
   <div class="tab active" onclick="showTab('saisie')"><i class="ti ti-calendar-plus"></i>Mes dispo</div>
   <div class="tab" onclick="showTab('recherche')"><i class="ti ti-search"></i>Chercher</div>
-  <div class="tab" onclick="showTab('equipe')"><i class="ti ti-users"></i>Ã‰quipe</div>
+  <div class="tab" onclick="showTab('equipe')"><i class="ti ti-users"></i>Equipe</div>
   <div class="tab" onclick="showTab('whatsapp')"><i class="ti ti-brand-whatsapp"></i>WhatsApp</div>
   <div class="tab" onclick="showTab('admin')"><i class="ti ti-lock"></i>Admin</div>
 </div>
 
-<!-- SAISIE -->
 <div id="tab-saisie" class="section active">
-  <div class="section-title">Saisir une disponibilitÃ©</div>
+  <div class="section-title">Saisir une disponibilite</div>
   <div class="card">
     <label>Je suis</label>
     <div id="chips-saisie"></div>
@@ -138,27 +127,26 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
       <div><label>Du</label><input type="date" id="s-debut"/></div>
       <div><label>Au</label><input type="date" id="s-fin"/></div>
     </div>
-    <label>CrÃ©neau(x)</label>
+    <label>Creneau(x)</label>
     <div class="creneaux-grid" id="cr-grid">
-      <button class="cr-btn" data-v="journee" onclick="toggleCr(this)"><span class="cr-nom">JournÃ©e</span><br><span class="cr-h">9h30 â€“ 16h30</span></button>
-      <button class="cr-btn" data-v="matin" onclick="toggleCr(this)"><span class="cr-nom">Matin</span><br><span class="cr-h">9h30 â€“ 12h00</span></button>
-      <button class="cr-btn" data-v="midi" onclick="toggleCr(this)"><span class="cr-nom">Mi-journÃ©e</span><br><span class="cr-h">12h00 â€“ 14h00</span></button>
-      <button class="cr-btn" data-v="gmatin" onclick="toggleCr(this)"><span class="cr-nom">Grand matin</span><br><span class="cr-h">9h30 â€“ 13h30</span></button>
-      <button class="cr-btn" data-v="aprem" onclick="toggleCr(this)"><span class="cr-nom">AprÃ¨s-midi</span><br><span class="cr-h">14h30 â€“ 16h30</span></button>
-      <button class="cr-btn" data-v="gaprem" onclick="toggleCr(this)"><span class="cr-nom">Grand aprÃ¨s-midi</span><br><span class="cr-h">14h00 â€“ 17h00</span></button>
+      <button class="cr-btn" data-v="journee" onclick="toggleCr(this)"><span class="cr-nom">Journee</span><span class="cr-h">9h30 - 16h30</span></button>
+      <button class="cr-btn" data-v="matin" onclick="toggleCr(this)"><span class="cr-nom">Matin</span><span class="cr-h">9h30 - 12h00</span></button>
+      <button class="cr-btn" data-v="midi" onclick="toggleCr(this)"><span class="cr-nom">Mi-journee</span><span class="cr-h">12h00 - 14h00</span></button>
+      <button class="cr-btn" data-v="gmatin" onclick="toggleCr(this)"><span class="cr-nom">Grand matin</span><span class="cr-h">9h30 - 13h30</span></button>
+      <button class="cr-btn" data-v="aprem" onclick="toggleCr(this)"><span class="cr-nom">Apres-midi</span><span class="cr-h">14h30 - 16h30</span></button>
+      <button class="cr-btn" data-v="gaprem" onclick="toggleCr(this)"><span class="cr-nom">Grand apres-midi</span><span class="cr-h">14h00 - 17h00</span></button>
     </div>
     <label>Note (optionnel)</label>
-    <input type="text" id="s-note" placeholder="Ex : sauf mauvaise mÃ©tÃ©oâ€¦"/>
-    <br/><br/>
+    <input type="text" id="s-note" placeholder="Ex : sauf mauvaise meteo..."/>
+    <br/>
     <button class="btn btn-green" onclick="sauvegarder()"><i class="ti ti-check"></i> Enregistrer</button>
   </div>
   <div id="mes-dispos-wrap" style="display:none">
-    <div style="font-size:14px;font-weight:600;color:#1a1a1a;margin-bottom:10px;">Mes disponibilitÃ©s</div>
+    <div style="font-size:14px;font-weight:600;margin-bottom:10px;">Mes disponibilites</div>
     <div id="mes-dispos-list"></div>
   </div>
 </div>
 
-<!-- RECHERCHE -->
 <div id="tab-recherche" class="section">
   <div class="section-title">Qui est disponible ?</div>
   <div class="card">
@@ -166,15 +154,15 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
       <div><label>Du</label><input type="date" id="r-debut"/></div>
       <div><label>Au</label><input type="date" id="r-fin"/></div>
     </div>
-    <label>CrÃ©neau</label>
+    <label>Creneau</label>
     <div class="creneaux-grid">
       <button class="cr-btn sel" data-v="tous" onclick="selRech(this)"><span class="cr-nom">Tous</span></button>
-      <button class="cr-btn" data-v="journee" onclick="selRech(this)"><span class="cr-nom">JournÃ©e</span><br><span class="cr-h">9h30 â€“ 16h30</span></button>
-      <button class="cr-btn" data-v="matin" onclick="selRech(this)"><span class="cr-nom">Matin</span><br><span class="cr-h">9h30 â€“ 12h00</span></button>
-      <button class="cr-btn" data-v="midi" onclick="selRech(this)"><span class="cr-nom">Mi-journÃ©e</span><br><span class="cr-h">12h00 â€“ 14h00</span></button>
-      <button class="cr-btn" data-v="gmatin" onclick="selRech(this)"><span class="cr-nom">Grand matin</span><br><span class="cr-h">9h30 â€“ 13h30</span></button>
-      <button class="cr-btn" data-v="aprem" onclick="selRech(this)"><span class="cr-nom">AprÃ¨s-midi</span><br><span class="cr-h">14h30 â€“ 16h30</span></button>
-      <button class="cr-btn" data-v="gaprem" onclick="selRech(this)"><span class="cr-nom">Grand aprÃ¨s-midi</span><br><span class="cr-h">14h00 â€“ 17h00</span></button>
+      <button class="cr-btn" data-v="journee" onclick="selRech(this)"><span class="cr-nom">Journee</span><span class="cr-h">9h30 - 16h30</span></button>
+      <button class="cr-btn" data-v="matin" onclick="selRech(this)"><span class="cr-nom">Matin</span><span class="cr-h">9h30 - 12h00</span></button>
+      <button class="cr-btn" data-v="midi" onclick="selRech(this)"><span class="cr-nom">Mi-journee</span><span class="cr-h">12h00 - 14h00</span></button>
+      <button class="cr-btn" data-v="gmatin" onclick="selRech(this)"><span class="cr-nom">Grand matin</span><span class="cr-h">9h30 - 13h30</span></button>
+      <button class="cr-btn" data-v="aprem" onclick="selRech(this)"><span class="cr-nom">Apres-midi</span><span class="cr-h">14h30 - 16h30</span></button>
+      <button class="cr-btn" data-v="gaprem" onclick="selRech(this)"><span class="cr-nom">Grand apres-midi</span><span class="cr-h">14h00 - 17h00</span></button>
     </div>
     <br/>
     <button class="btn btn-primary" onclick="rechercher()"><i class="ti ti-search"></i> Rechercher</button>
@@ -182,72 +170,51 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
   <div id="resultats"></div>
 </div>
 
-<!-- EQUIPE -->
 <div id="tab-equipe" class="section">
-  <div class="section-title">Toutes les disponibilitÃ©s</div>
+  <div class="section-title">Toutes les disponibilites</div>
   <div id="legende-equipe" class="legend-row"></div>
-  <div id="vue-equipe"><div class="empty">Chargementâ€¦</div></div>
+  <div id="vue-equipe"><div class="empty">Chargement...</div></div>
 </div>
 
-<!-- WHATSAPP -->
 <div id="tab-whatsapp" class="section">
   <div class="section-title">Partager sur WhatsApp</div>
   <div class="card">
-    <label>Date concernÃ©e</label>
+    <label>Date concernee</label>
     <input type="date" id="wa-date"/>
-    <label>NumÃ©ro du destinataire (optionnel)</label>
+    <label>Numero du destinataire (optionnel)</label>
     <input type="tel" id="wa-numero" placeholder="+33612345678"/>
-    <div class="wa-preview" id="wa-preview">Le rÃ©sumÃ© apparaÃ®tra iciâ€¦</div>
+    <div class="wa-preview" id="wa-preview">Le resume apparaitra ici...</div>
     <div class="btn-row">
-      <button class="btn btn-ghost" onclick="genWA()"><i class="ti ti-refresh"></i> GÃ©nÃ©rer</button>
+      <button class="btn btn-ghost" onclick="genWA()"><i class="ti ti-refresh"></i> Generer</button>
       <button class="btn btn-wa" onclick="envoyerWA()"><i class="ti ti-brand-whatsapp"></i> WhatsApp</button>
       <button class="btn btn-ghost" onclick="copierWA()"><i class="ti ti-copy"></i> Copier</button>
     </div>
   </div>
 </div>
 
-<!-- ADMIN -->
 <div id="tab-admin" class="section">
   <div style="display:flex;align-items:center;margin-bottom:14px;">
     <span class="section-title" style="margin-bottom:0">Admin</span>
-    <span class="admin-badge" id="admin-badge" style="display:none"><i class="ti ti-check"></i> ConnectÃ©e</span>
+    <span class="admin-badge" id="admin-badge" style="display:none"><i class="ti ti-check"></i> Connectee</span>
   </div>
-
   <div id="pin-setup" style="display:none">
     <div class="setup-box">
-      <p style="font-size:13px;color:#0C447C;font-weight:600;margin-bottom:4px">Premier accÃ¨s â€” dÃ©finissez votre PIN</p>
-      <p style="font-size:12px;color:#185FA5;">Ce code protÃ¨ge l'espace admin. Notez-le !</p>
+      <p style="font-size:13px;color:#0C447C;font-weight:600;margin-bottom:4px">Premier acces - definissez votre PIN</p>
+      <p style="font-size:12px;color:#185FA5;">Ce code protege l'espace admin. Notez-le !</p>
     </div>
     <div class="pin-screen">
-      <p style="font-size:13px;color:#666;">Choisissez un code PIN Ã  4 chiffres</p>
+      <p style="font-size:13px;color:#666;">Choisissez un code PIN a 4 chiffres</p>
       <div class="pin-inputs">
         <input class="pin-input" type="password" maxlength="1" inputmode="numeric" id="ps0" oninput="pinSetupNext(0)"/>
         <input class="pin-input" type="password" maxlength="1" inputmode="numeric" id="ps1" oninput="pinSetupNext(1)"/>
         <input class="pin-input" type="password" maxlength="1" inputmode="numeric" id="ps2" oninput="pinSetupNext(2)"/>
         <input class="pin-input" type="password" maxlength="1" inputmode="numeric" id="ps3" oninput="pinSetupNext(3)"/>
       </div>
-      <button class="btn btn-purple" onclick="savePIN()"><i class="ti ti-lock"></i> DÃ©finir ce PIN</button>
+      <button class="btn btn-purple" onclick="savePIN()"><i class="ti ti-lock"></i> Definir ce PIN</button>
     </div>
   </div>
-
   <div id="pin-login" style="display:none">
     <div class="pin-screen">
-      <div class="logo" style="width:52px;height:52px;border-radius:14px;margin-bottom:12px;">
-        <svg width="28" height="28" viewBox="0 0 22 22" fill="none">
-          <line x1="11" y1="2" x2="11" y2="20" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-          <line x1="2" y1="11" x2="20" y2="11" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-          <line x1="4.1" y1="4.1" x2="17.9" y2="17.9" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-          <line x1="17.9" y1="4.1" x2="4.1" y2="17.9" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-          <line x1="7" y1="2.5" x2="11" y2="5.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
-          <line x1="15" y1="2.5" x2="11" y2="5.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
-          <line x1="7" y1="19.5" x2="11" y2="16.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
-          <line x1="15" y1="19.5" x2="11" y2="16.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
-          <line x1="2.5" y1="7" x2="5.5" y2="11" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
-          <line x1="2.5" y1="15" x2="5.5" y2="11" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
-          <line x1="19.5" y1="7" x2="16.5" y2="11" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
-          <line x1="19.5" y1="15" x2="16.5" y2="11" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
-        </svg>
-      </div>
       <p style="font-size:15px;font-weight:600;color:#1a1a1a;">Snowlink Admin</p>
       <p style="font-size:12px;color:#888;margin-top:4px;">Entrez votre code PIN</p>
       <div class="pin-inputs">
@@ -259,33 +226,29 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
       <p id="pin-error" style="font-size:12px;color:#A32D2D;min-height:18px;margin-top:4px;"></p>
     </div>
   </div>
-
   <div id="admin-panel" style="display:none">
     <div class="card">
       <div style="font-size:14px;font-weight:600;margin-bottom:12px;">Ajouter un moniteur</div>
       <div class="row2">
-        <div><label>PrÃ©nom</label><input type="text" id="m-prenom" placeholder="Jean"/></div>
+        <div><label>Prenom</label><input type="text" id="m-prenom" placeholder="Jean"/></div>
         <div><label>Nom</label><input type="text" id="m-nom" placeholder="Dupont"/></div>
       </div>
-      <label>TÃ©lÃ©phone</label>
+      <label>Telephone</label>
       <input type="tel" id="m-tel" placeholder="+33612345678"/>
-      <br/><br/>
+      <br/>
       <button class="btn btn-green" onclick="ajouterMoniteur()"><i class="ti ti-plus"></i> Ajouter</button>
     </div>
-
-    <div style="font-size:14px;font-weight:600;color:#1a1a1a;margin-bottom:10px;">moniteurs inscrits</div>
+    <div style="font-size:14px;font-weight:600;margin-bottom:10px;">Moniteurs inscrits</div>
     <div class="card" id="liste-moniteurs" style="padding:8px 14px;"></div>
-
     <div class="card" style="margin-top:8px;">
       <div style="font-size:13px;font-weight:600;margin-bottom:8px;">Lien de l'application</div>
-      <label>URL Snowlink Ã  envoyer aux moniteurs</label>
-      <input type="url" id="app-url" placeholder="https://votrenom.github.io/snowlink-app"/>
-      <br/><br/>
+      <label>URL Snowlink</label>
+      <input type="url" id="app-url" placeholder="https://snowlink-app.github.io/snowlink-app"/>
+      <br/>
       <button class="btn btn-ghost" onclick="saveAppUrl()"><i class="ti ti-check"></i> Enregistrer</button>
     </div>
-
     <div style="margin-top:12px;text-align:right;">
-      <button class="btn btn-ghost btn-sm" onclick="adminLogout()"><i class="ti ti-logout"></i> Se dÃ©connecter</button>
+      <button class="btn btn-ghost btn-sm" onclick="adminLogout()"><i class="ti ti-logout"></i> Se deconnecter</button>
     </div>
   </div>
 </div>
@@ -294,10 +257,10 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
 <div class="toast" id="toast"></div>
 
 <script>
-const SUPABASE_URL = 'https://dblvhotxhoyvruunxyef.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRibHZob3R4aG95dnJ1dW54eWVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NjMwMTIsImV4cCI6MjA5NjMzOTAxMn0.54kt4V0kN4N-8Bb6L2uyrTTnmMTUlhYxiznqEXMnkEo';
+var SURL='https://dblvhotxhoyvruunxyef.supabase.co';
+var SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRibHZob3R4aG95dnJ1dW54eWVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NjMwMTIsImV4cCI6MjA5NjMzOTAxMn0.54kt4V0kN4N-8Bb6L2uyrTTnmMTUlhYxiznqEXMnkEo';
 
-const PALETTE=[
+var PALETTE=[
   {bg:'#EEEDFE',border:'#AFA9EC',text:'#3C3489',dot:'#534AB7'},
   {bg:'#E1F5EE',border:'#5DCAA5',text:'#085041',dot:'#0F6E56'},
   {bg:'#FAEEDA',border:'#FAC775',text:'#633806',dot:'#BA7517'},
@@ -305,73 +268,96 @@ const PALETTE=[
   {bg:'#FBEAF0',border:'#ED93B1',text:'#72243E',dot:'#993556'},
   {bg:'#EAF3DE',border:'#97C459',text:'#27500A',dot:'#3B6D11'},
   {bg:'#FCEBEB',border:'#F09595',text:'#791F1F',dot:'#A32D2D'},
-  {bg:'#F1EFE8',border:'#B4B2A9',text:'#444441',dot:'#5F5E5A'},
+  {bg:'#F1EFE8',border:'#B4B2A9',text:'#444441',dot:'#5F5E5A'}
 ];
-const CRENEAUX={journee:{nom:'JournÃ©e',h:'9h30â€“16h30',cls:'b-journee'},matin:{nom:'Matin',h:'9h30â€“12h00',cls:'b-matin'},midi:{nom:'Mi-journÃ©e',h:'12h00â€“14h00',cls:'b-midi'},gmatin:{nom:'Grand matin',h:'9h30â€“13h30',cls:'b-gmatin'},aprem:{nom:'AprÃ¨s-midi',h:'14h30â€“16h30',cls:'b-aprem'},gaprem:{nom:'Grand ap-m.',h:'14h00â€“17h00',cls:'b-gaprem'}};
+var CRENEAUX={
+  journee:{nom:'Journee',h:'9h30-16h30',cls:'b-journee'},
+  matin:{nom:'Matin',h:'9h30-12h00',cls:'b-matin'},
+  midi:{nom:'Mi-journee',h:'12h00-14h00',cls:'b-midi'},
+  gmatin:{nom:'Grand matin',h:'9h30-13h30',cls:'b-gmatin'},
+  aprem:{nom:'Apres-midi',h:'14h30-16h30',cls:'b-aprem'},
+  gaprem:{nom:'Grand ap-m.',h:'14h00-17h00',cls:'b-gaprem'}
+};
 
-function getColor(id){const i=cache.moniteurs.findIndex(m=>m.id===id);return PALETTE[i>=0?i%PALETTE.length:0];}
+function getColor(id){var i=cache.moniteurs.findIndex(function(m){return m.id===id;});return PALETTE[i>=0?i%PALETTE.length:0];}
 function ini(p,n){return((p||'?')[0]+(n||'?')[0]).toUpperCase();}
-function fd(s){if(!s)return'';const d=new Date(s+'T00:00:00');return d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});}
+function fd(s){if(!s)return'';var d=new Date(s+'T00:00:00');return d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});}
 function today(){return new Date().toISOString().split('T')[0];}
-function tomorrow(){const d=new Date();d.setDate(d.getDate()+1);return d.toISOString().split('T')[0];}
+function tomorrow(){var d=new Date();d.setDate(d.getDate()+1);return d.toISOString().split('T')[0];}
 
-let selMoniteur=null,selCreneaux=[],rechCr='tous',waMsg='';
-let cache={moniteurs:[],dispos:[]};
-let adminUnlocked=false;
+var selMoniteur=null,selCreneaux=[],rechCr='tous',waMsg='';
+var cache={moniteurs:[],dispos:[]};
+var adminUnlocked=false;
 
 function setSyncStatus(ok,msg){
-  const dot=document.getElementById('sync-dot');
+  var dot=document.getElementById('sync-dot');
   dot.className='dot'+(ok===null?' loading':ok?' ':' off');
   document.getElementById('sync-label').textContent=msg;
 }
 
-async function sbFetch(path,options={}){
-  const res=await fetch(SUPABASE_URL+'/rest/v1/'+path,{
-    headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation',...(options.headers||{})},
-    ...options
+function sbFetch(path,options){
+  options=options||{};
+  return fetch(SURL+'/rest/v1/'+path,{
+    method:options.method||'GET',
+    headers:{
+      'apikey':SKEY,
+      'Authorization':'Bearer '+SKEY,
+      'Content-Type':'application/json',
+      'Prefer':'return=representation'
+    },
+    body:options.body||undefined
+  }).then(function(res){
+    if(!res.ok){return res.text().then(function(t){throw new Error(t);});}
+    var ct=res.headers.get('content-type')||'';
+    return ct.indexOf('json')>=0?res.json():[];
   });
-  if(!res.ok){const e=await res.text();throw new Error(e);}
-  const ct=res.headers.get('content-type')||'';
-  return ct.includes('json')?res.json():[];
 }
 
-async function loadAll(){
-  setSyncStatus(null,'Synchronisation Snowlinkâ€¦');
-  try{
-    const [m,d]=await Promise.all([sbFetch('moniteurs?select=*&order=created_at.asc'),sbFetch('dispos?select=*&order=created_at.asc')]);
-    cache.moniteurs=m||[];
-    cache.dispos=(d||[]).map(r=>({...r,creneaux:JSON.parse(r.creneaux||'[]')}));
-    setSyncStatus(true,'Snowlink Â· synchronisÃ©');
-  }catch(e){
+function loadAll(){
+  setSyncStatus(null,'Synchronisation Snowlink...');
+  return Promise.all([
+    sbFetch('moniteurs?select=*&order=created_at.asc'),
+    sbFetch('dispos?select=*&order=created_at.asc')
+  ]).then(function(results){
+    cache.moniteurs=results[0]||[];
+    cache.dispos=(results[1]||[]).map(function(r){
+      r.creneaux=JSON.parse(r.creneaux||'[]');
+      return r;
+    });
+    setSyncStatus(true,'Snowlink synchronise');
+    renderChips();renderListeMoniteurs();renderMesDispos();
+  }).catch(function(){
     setSyncStatus(false,'Hors ligne');
     try{cache.moniteurs=JSON.parse(localStorage.getItem('sl_m')||'[]');cache.dispos=JSON.parse(localStorage.getItem('sl_d')||'[]');}catch(x){}
-  }
-  renderChips();renderListemoniteurs();renderMesdispos();
-  const u=localStorage.getItem('sl_appurl');if(u)document.getElementById('app-url').value=u;
+    renderChips();renderListeMoniteurs();renderMesDispos();
+  });
 }
 
-function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
-function badgeCr(v){const c=CRENEAUX[v];return c?`<span class="badge ${c.cls}">${c.nom}</span>`:''}
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2500);}
+function badgeCr(v){var c=CRENEAUX[v];return c?'<span class="badge '+c.cls+'">'+c.nom+'</span>':'';}
 
 function getPINHash(){return localStorage.getItem('sl_pin')||null;}
-function hashPIN(pin){let h=5381;for(let c of pin)h=((h<<5)+h)+c.charCodeAt(0);return(h>>>0).toString(16);}
-function pinSetupNext(i){if(document.getElementById('ps'+i).value&&i<3)document.getElementById('ps'+(i+1)).focus();}
-function pinLoginNext(i){if(document.getElementById('pl'+i).value&&i<3)document.getElementById('pl'+(i+1)).focus();if(i===3&&document.getElementById('pl'+i).value)checkPIN();}
+function hashPIN(pin){var h=5381;for(var i=0;i<pin.length;i++)h=((h<<5)+h)+pin.charCodeAt(i);return(h>>>0).toString(16);}
 
+function pinSetupNext(i){if(document.getElementById('ps'+i).value&&i<3)document.getElementById('ps'+(i+1)).focus();}
+function pinLoginNext(i){
+  if(document.getElementById('pl'+i).value&&i<3)document.getElementById('pl'+(i+1)).focus();
+  if(i===3&&document.getElementById('pl'+i).value)checkPIN();
+}
 function savePIN(){
-  const pin=[0,1,2,3].map(i=>document.getElementById('ps'+i).value).join('');
+  var pin='';for(var i=0;i<4;i++)pin+=document.getElementById('ps'+i).value;
   if(pin.length<4){toast('Entrez 4 chiffres');return;}
   localStorage.setItem('sl_pin',hashPIN(pin));
-  adminUnlocked=true;showAdminPanel();toast('PIN dÃ©fini âœ“');
+  adminUnlocked=true;showAdminPanel();toast('PIN defini !');
 }
 function checkPIN(){
-  const pin=[0,1,2,3].map(i=>document.getElementById('pl'+i).value).join('');
+  var pin='';for(var i=0;i<4;i++)pin+=document.getElementById('pl'+i).value;
   if(hashPIN(pin)===getPINHash()){adminUnlocked=true;showAdminPanel();}
   else{
     document.getElementById('pin-error').textContent='Code incorrect.';
-    [0,1,2,3].forEach(i=>{const el=document.getElementById('pl'+i);el.value='';el.style.borderColor='#E24B4A';});
+    for(var i=0;i<4;i++){var el=document.getElementById('pl'+i);el.value='';el.style.borderColor='#E24B4A';}
     document.getElementById('pl0').focus();
-    setTimeout(()=>[0,1,2,3].forEach(i=>document.getElementById('pl'+i).style.borderColor=''),1500);
+    setTimeout(function(){for(var i=0;i<4;i++)document.getElementById('pl'+i).style.borderColor='';},1500);
   }
 }
 function showAdminPanel(){
@@ -379,7 +365,7 @@ function showAdminPanel(){
   document.getElementById('pin-login').style.display='none';
   document.getElementById('admin-panel').style.display='block';
   document.getElementById('admin-badge').style.display='inline-flex';
-  renderListemoniteurs();
+  renderListeMoniteurs();
 }
 function adminLogout(){
   adminUnlocked=false;
@@ -388,225 +374,275 @@ function adminLogout(){
   showAdminLogin();
 }
 function showAdminLogin(){
-  [0,1,2,3].forEach(i=>document.getElementById('pl'+i).value='');
+  for(var i=0;i<4;i++)document.getElementById('pl'+i).value='';
   document.getElementById('pin-error').textContent='';
   document.getElementById('pin-login').style.display='block';
-  setTimeout(()=>document.getElementById('pl0').focus(),100);
+  setTimeout(function(){document.getElementById('pl0').focus();},100);
 }
 
 function renderChips(){
-  const c=document.getElementById('chips-saisie');
+  var c=document.getElementById('chips-saisie');
   if(!cache.moniteurs.length){c.innerHTML='<span style="font-size:12px;color:#aaa">Aucun moniteur inscrit.</span>';return;}
-  c.innerHTML=cache.moniteurs.map((m,i)=>{
-    const col=PALETTE[i%PALETTE.length];
-    const isSel=selMoniteur&&selMoniteur.id===m.id;
-    return`<span class="profil-chip" style="${isSel?`background:${col.bg};border-color:${col.border};color:${col.text};`:''}" onclick="selectMoniteur('${m.id}')">
-      <span style="width:8px;height:8px;border-radius:50%;background:${col.dot};display:inline-block;flex-shrink:0"></span>
-      ${m.prenom} ${m.nom}
-    </span>`;
+  c.innerHTML=cache.moniteurs.map(function(m,i){
+    var col=PALETTE[i%PALETTE.length];
+    var isSel=selMoniteur&&selMoniteur.id===m.id;
+    return '<span class="profil-chip" style="'+(isSel?'background:'+col.bg+';border-color:'+col.border+';color:'+col.text+';font-weight:500':'')+'" onclick="selectMoniteur(\''+m.id+'\')">'
+      +'<span style="width:8px;height:8px;border-radius:50%;background:'+col.dot+';display:inline-block;flex-shrink:0"></span>'
+      +m.prenom+' '+m.nom+'</span>';
   }).join('');
 }
 
-function selectMoniteur(id){selMoniteur=cache.moniteurs.find(x=>x.id===id)||null;renderChips();renderMesdispos();}
+function selectMoniteur(id){
+  selMoniteur=cache.moniteurs.find(function(x){return x.id===id;})||null;
+  renderChips();renderMesDispos();
+}
 
 function toggleCr(btn){
-  const v=btn.dataset.v;
+  var v=btn.dataset.v;
   if(v==='journee'){selCreneaux=['journee'];}
-  else{selCreneaux=selCreneaux.filter(x=>x!=='journee');if(selCreneaux.includes(v))selCreneaux=selCreneaux.filter(x=>x!==v);else selCreneaux.push(v);}
-  document.querySelectorAll('#cr-grid .cr-btn').forEach(b=>b.classList.toggle('sel',selCreneaux.includes(b.dataset.v)));
+  else{
+    selCreneaux=selCreneaux.filter(function(x){return x!=='journee';});
+    if(selCreneaux.indexOf(v)>=0)selCreneaux=selCreneaux.filter(function(x){return x!==v;});
+    else selCreneaux.push(v);
+  }
+  document.querySelectorAll('#cr-grid .cr-btn').forEach(function(b){b.classList.toggle('sel',selCreneaux.indexOf(b.dataset.v)>=0);});
 }
-function selRech(btn){rechCr=btn.dataset.v;document.querySelectorAll('#tab-recherche .cr-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');}
 
-async function sauvegarder(){
-  if(!selMoniteur){toast('SÃ©lectionnez votre nom');return;}
-  const d1=document.getElementById('s-debut').value,d2=document.getElementById('s-fin').value;
+function selRech(btn){
+  rechCr=btn.dataset.v;
+  document.querySelectorAll('#tab-recherche .cr-btn').forEach(function(b){b.classList.remove('sel');});
+  btn.classList.add('sel');
+}
+
+function sauvegarder(){
+  if(!selMoniteur){toast('Selectionnez votre nom');return;}
+  var d1=document.getElementById('s-debut').value,d2=document.getElementById('s-fin').value;
   if(!d1||!d2){toast('Choisissez les dates');return;}
-  if(!selCreneaux.length){toast('Choisissez un crÃ©neau');return;}
-  const note=document.getElementById('s-note').value.trim();
-  const row={id:Date.now().toString(),moniteur_id:selMoniteur.id,prenom:selMoniteur.prenom,nom:selMoniteur.nom,debut:d1,fin:d2,creneaux:JSON.stringify(selCreneaux),note};
-  setSyncStatus(null,'Sauvegardeâ€¦');
-  try{
-    await sbFetch('dispos',{method:'POST',body:JSON.stringify(row)});
-    cache.dispos.push({...row,creneaux:selCreneaux});
-    setSyncStatus(true,'Snowlink Â· synchronisÃ©');
-  }catch(e){setSyncStatus(false,'Erreur sauvegarde');}
-  selCreneaux=[];document.querySelectorAll('#cr-grid .cr-btn').forEach(b=>b.classList.remove('sel'));
-  document.getElementById('s-note').value='';toast('DisponibilitÃ© enregistrÃ©e âœ“');renderMesdispos();
+  if(!selCreneaux.length){toast('Choisissez un creneau');return;}
+  var note=document.getElementById('s-note').value.trim();
+  var newId=Date.now().toString();
+  var row={id:newId,moniteur_id:selMoniteur.id,prenom:selMoniteur.prenom,nom:selMoniteur.nom,debut:d1,fin:d2,creneaux:JSON.stringify(selCreneaux),note:note};
+  setSyncStatus(null,'Sauvegarde...');
+  sbFetch('dispos',{method:'POST',body:JSON.stringify(row)}).then(function(){
+    var localRow={id:newId,moniteur_id:selMoniteur.id,prenom:selMoniteur.prenom,nom:selMoniteur.nom,debut:d1,fin:d2,creneaux:selCreneaux,note:note};
+    cache.dispos.push(localRow);
+    setSyncStatus(true,'Snowlink synchronise');
+    selCreneaux=[];
+    document.querySelectorAll('#cr-grid .cr-btn').forEach(function(b){b.classList.remove('sel');});
+    document.getElementById('s-note').value='';
+    toast('Disponibilite enregistree !');
+    renderMesDispos();
+  }).catch(function(){setSyncStatus(false,'Erreur sauvegarde');});
 }
 
-function renderMesdispos(){
+function renderMesDispos(){
   if(!selMoniteur){document.getElementById('mes-dispos-wrap').style.display='none';return;}
-  const data=cache.dispos.filter(d=>d.moniteur_id===selMoniteur.id);
-  const wrap=document.getElementById('mes-dispos-wrap');
+  var data=cache.dispos.filter(function(d){return d.moniteur_id===selMoniteur.id;});
+  var wrap=document.getElementById('mes-dispos-wrap');
   if(!data.length){wrap.style.display='none';return;}
-  const col=getColor(selMoniteur.id);
+  var col=getColor(selMoniteur.id);
   wrap.style.display='block';
-  document.getElementById('mes-dispos-list').innerHTML=data.map(d=>`
-    <div style="background:${col.bg};border:0.5px solid ${col.border};border-radius:10px;padding:10px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:flex-start;">
-      <div>
-        <span style="font-size:13px;font-weight:600;color:${col.text}">${fd(d.debut)}${d.debut!==d.fin?' â†’ '+fd(d.fin):''}</span>
-        <span style="margin-left:4px">${(Array.isArray(d.creneaux)?d.creneaux:[]).map(badgeCr).join(' ')}</span>
-        ${d.note?`<div style="font-size:11px;color:${col.text};opacity:.75;margin-top:2px">${d.note}</div>`:''}
-      </div>
-      <button class="del-btn" onclick="suppDispo('${d.id}')">&#x2715;</button>
-    </div>`).join('');
+  document.getElementById('mes-dispos-list').innerHTML=data.map(function(d){
+    var crs=Array.isArray(d.creneaux)?d.creneaux:[];
+    return '<div style="background:'+col.bg+';border:0.5px solid '+col.border+';border-radius:10px;padding:10px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:flex-start;">'
+      +'<div><span style="font-size:13px;font-weight:600;color:'+col.text+'">'+fd(d.debut)+(d.debut!==d.fin?' - '+fd(d.fin):'')+'</span>'
+      +'<span style="margin-left:4px">'+crs.map(badgeCr).join(' ')+'</span>'
+      +(d.note?'<div style="font-size:11px;color:'+col.text+';opacity:.75;margin-top:2px">'+d.note+'</div>':'')
+      +'</div><button class="del-btn" onclick="suppDispo(\''+d.id+'\')">&#x2715;</button></div>';
+  }).join('');
 }
 
-async function suppDispo(id){
-  if(!confirm('Supprimer cette disponibilitÃ© ?'))return;
-  setSyncStatus(null,'Suppressionâ€¦');
-  try{await sbFetch('dispos?id=eq.'+id,{method:'DELETE'});}catch(e){}
-  cache.dispos=cache.dispos.filter(d=>d.id!==id);
-  setSyncStatus(true,'Snowlink Â· synchronisÃ©');
-  renderMesdispos();
-  if(document.getElementById('tab-equipe').classList.contains('active'))renderEquipe();
+function suppDispo(id){
+  if(!confirm('Supprimer cette disponibilite ?'))return;
+  setSyncStatus(null,'Suppression...');
+  sbFetch('dispos?id=eq.'+id,{method:'DELETE'}).then(function(){}).catch(function(){});
+  cache.dispos=cache.dispos.filter(function(d){return d.id!==id;});
+  setSyncStatus(true,'Snowlink synchronise');
+  renderMesDispos();
 }
 
 function rechercher(){
-  const d1=document.getElementById('r-debut').value,d2=document.getElementById('r-fin').value;
-  const res=document.getElementById('resultats');
+  var d1=document.getElementById('r-debut').value,d2=document.getElementById('r-fin').value;
+  var res=document.getElementById('resultats');
   if(!d1||!d2){toast('Choisissez les dates');return;}
-  const data=cache.dispos.filter(d=>{
+  var data=cache.dispos.filter(function(d){
     if(d.debut>d2||d.fin<d1)return false;
     if(rechCr==='tous')return true;
-    return(Array.isArray(d.creneaux)?d.creneaux:[]).includes(rechCr);
+    var crs=Array.isArray(d.creneaux)?d.creneaux:[];
+    return crs.indexOf(rechCr)>=0;
   });
-  if(!data.length){res.innerHTML='<div class="empty">Aucun moniteur disponible sur cette pÃ©riode.</div>';return;}
-  const byId={};data.forEach(d=>{const k=d.moniteur_id;if(!byId[k])byId[k]={prenom:d.prenom,nom:d.nom,mid:d.moniteur_id,dispos:[]};byId[k].dispos.push(d);});
-  res.innerHTML=Object.values(byId).map(m=>{
-    const col=getColor(m.mid);
-    return`<div class="moniteur-card" style="background:${col.bg};border-color:${col.border};">
-      <div class="avatar" style="width:36px;height:36px;font-size:12px;background:${col.dot};">${ini(m.prenom,m.nom)}</div>
-      <div style="flex:1"><div class="tag-nom" style="color:${col.text}">${m.prenom} ${m.nom}</div>
-      ${m.dispos.map(d=>`<div class="tag-d" style="color:${col.text}">${fd(d.debut)}${d.debut!==d.fin?' â†’ '+fd(d.fin):''} ${(Array.isArray(d.creneaux)?d.creneaux:[]).map(badgeCr).join(' ')}${d.note?' Â· '+d.note:''}</div>`).join('')}
-      </div></div>`;
-  }).join('');
-}
-
-function renderLegende(){
-  const el=document.getElementById('legende-equipe');
-  const ids=[...new Set(cache.dispos.map(d=>d.moniteur_id))];
-  if(!ids.length){el.innerHTML='';return;}
-  el.innerHTML=ids.map(id=>{
-    const m=cache.moniteurs.find(x=>x.id===id);if(!m)return'';
-    const col=getColor(id);
-    return`<span class="legend-chip" style="background:${col.bg};border-color:${col.border};color:${col.text};"><span style="width:8px;height:8px;border-radius:50%;background:${col.dot};display:inline-block"></span> ${m.prenom} ${m.nom}</span>`;
+  if(!data.length){res.innerHTML='<div class="empty">Aucun moniteur disponible.</div>';return;}
+  var byId={};
+  data.forEach(function(d){
+    var k=d.moniteur_id;
+    if(!byId[k])byId[k]={prenom:d.prenom,nom:d.nom,mid:d.moniteur_id,dispos:[]};
+    byId[k].dispos.push(d);
+  });
+  res.innerHTML=Object.values(byId).map(function(m){
+    var col=getColor(m.mid);
+    return '<div class="moniteur-card" style="background:'+col.bg+';border-color:'+col.border+';">'
+      +'<div class="avatar" style="width:36px;height:36px;font-size:12px;background:'+col.dot+';">'+ini(m.prenom,m.nom)+'</div>'
+      +'<div style="flex:1"><div class="tag-nom" style="color:'+col.text+'">'+m.prenom+' '+m.nom+'</div>'
+      +m.dispos.map(function(d){
+        var crs=Array.isArray(d.creneaux)?d.creneaux:[];
+        return '<div class="tag-d" style="color:'+col.text+'">'+fd(d.debut)+(d.debut!==d.fin?' - '+fd(d.fin):'')+' '+crs.map(badgeCr).join(' ')+(d.note?' - '+d.note:'')+'</div>';
+      }).join('')+'</div></div>';
   }).join('');
 }
 
 function renderEquipe(){
-  renderLegende();
-  const el=document.getElementById('vue-equipe');
-  if(!cache.dispos.length){el.innerHTML='<div class="empty">Aucune disponibilitÃ© enregistrÃ©e.</div>';return;}
-  const byId={};cache.dispos.forEach(d=>{const k=d.moniteur_id;if(!byId[k])byId[k]={prenom:d.prenom,nom:d.nom,mid:d.moniteur_id,dispos:[]};byId[k].dispos.push(d);});
-  el.innerHTML=Object.values(byId).map(m=>{
-    const col=getColor(m.mid);
-    return`<div class="moniteur-card" style="background:${col.bg};border-color:${col.border};">
-      <div class="avatar" style="width:36px;height:36px;font-size:12px;background:${col.dot};margin-top:2px">${ini(m.prenom,m.nom)}</div>
-      <div style="flex:1"><div class="tag-nom" style="color:${col.text}">${m.prenom} ${m.nom}</div>
-      ${m.dispos.map(d=>`<div class="tag-d" style="color:${col.text}">${fd(d.debut)}${d.debut!==d.fin?' â†’ '+fd(d.fin):''} ${(Array.isArray(d.creneaux)?d.creneaux:[]).map(badgeCr).join(' ')}${d.note?' Â· '+d.note:''}</div>`).join('')}
-      </div></div>`;
+  var ids=[...new Set(cache.dispos.map(function(d){return d.moniteur_id;}))];
+  var leg=document.getElementById('legende-equipe');
+  leg.innerHTML=ids.map(function(id){
+    var m=cache.moniteurs.find(function(x){return x.id===id;});
+    if(!m)return'';
+    var col=getColor(id);
+    return '<span class="legend-chip" style="background:'+col.bg+';border-color:'+col.border+';color:'+col.text+';">'
+      +'<span style="width:8px;height:8px;border-radius:50%;background:'+col.dot+';display:inline-block"></span> '+m.prenom+' '+m.nom+'</span>';
+  }).join('');
+  var el=document.getElementById('vue-equipe');
+  if(!cache.dispos.length){el.innerHTML='<div class="empty">Aucune disponibilite enregistree.</div>';return;}
+  var byId={};
+  cache.dispos.forEach(function(d){
+    var k=d.moniteur_id;
+    if(!byId[k])byId[k]={prenom:d.prenom,nom:d.nom,mid:d.moniteur_id,dispos:[]};
+    byId[k].dispos.push(d);
+  });
+  el.innerHTML=Object.values(byId).map(function(m){
+    var col=getColor(m.mid);
+    return '<div class="moniteur-card" style="background:'+col.bg+';border-color:'+col.border+';">'
+      +'<div class="avatar" style="width:36px;height:36px;font-size:12px;background:'+col.dot+';margin-top:2px">'+ini(m.prenom,m.nom)+'</div>'
+      +'<div style="flex:1"><div class="tag-nom" style="color:'+col.text+'">'+m.prenom+' '+m.nom+'</div>'
+      +m.dispos.map(function(d){
+        var crs=Array.isArray(d.creneaux)?d.creneaux:[];
+        return '<div class="tag-d" style="color:'+col.text+'">'+fd(d.debut)+(d.debut!==d.fin?' - '+fd(d.fin):'')+' '+crs.map(badgeCr).join(' ')+(d.note?' - '+d.note:'')+'</div>';
+      }).join('')+'</div></div>';
   }).join('');
 }
 
 function buildInviteMsg(m,appUrl){
-  return`Bonjour ${m.prenom} ðŸ‘‹\n\nTu es invitÃ©(e) Ã  rejoindre *Snowlink*, l'app de disponibilitÃ©s de notre Ã©quipe ESF !\n\nâ„ï¸ AccÃ¨de Ã  l'app ici :\n${appUrl||'[lien Ã  configurer]'}\n\nTu pourras y saisir tes disponibilitÃ©s et consulter celles de l'Ã©quipe.\n\nÃ€ bientÃ´t sur les pistes ! ðŸŽ¿`;
+  return 'Bonjour '+m.prenom+' !\n\nTu es invite(e) a rejoindre Snowlink, l\'app de disponibilites de notre equipe ESF !\n\nAccede a l\'app ici :\n'+(appUrl||'[lien a configurer]')+'\n\nA bientot sur les pistes !';
 }
-
 function inviterWA(id){
-  const m=cache.moniteurs.find(x=>x.id===id);if(!m)return;
-  const url=localStorage.getItem('sl_appurl')||'';
-  const msg=buildInviteMsg(m,url);
-  const num=(m.tel||'').replace(/\s/g,'');
-  window.open(num?`https://wa.me/${num.replace('+','')}?text=${encodeURIComponent(msg)}`:`https://wa.me/?text=${encodeURIComponent(msg)}`);
+  var m=cache.moniteurs.find(function(x){return x.id===id;});if(!m)return;
+  var url=localStorage.getItem('sl_appurl')||'';
+  var msg=buildInviteMsg(m,url);
+  var num=(m.tel||'').replace(/\s/g,'');
+  window.open(num?'https://wa.me/'+num.replace('+','')+'?text='+encodeURIComponent(msg):'https://wa.me/?text='+encodeURIComponent(msg));
 }
 function inviterSMS(id){
-  const m=cache.moniteurs.find(x=>x.id===id);if(!m)return;
-  const url=localStorage.getItem('sl_appurl')||'';
-  const msg=buildInviteMsg(m,url);
-  const num=(m.tel||'').replace(/\s/g,'');
-  window.open(`sms:${num}?body=${encodeURIComponent(msg)}`);
+  var m=cache.moniteurs.find(function(x){return x.id===id;});if(!m)return;
+  var url=localStorage.getItem('sl_appurl')||'';
+  var msg=buildInviteMsg(m,url);
+  var num=(m.tel||'').replace(/\s/g,'');
+  window.open('sms:'+num+'?body='+encodeURIComponent(msg));
 }
 
 function genWA(){
-  const date=document.getElementById('wa-date').value||tomorrow();
-  const data=cache.dispos.filter(d=>d.debut<=date&&d.fin>=date);
-  let msg=`â„ï¸ *Snowlink â€“ dispos ESF*\n${new Date(date+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})}\n\n`;
-  if(!data.length){msg+='Aucune disponibilitÃ© pour ce jour.';}
+  var date=document.getElementById('wa-date').value||tomorrow();
+  var data=cache.dispos.filter(function(d){return d.debut<=date&&d.fin>=date;});
+  var msg='Snowlink - Dispos ESF\n'+new Date(date+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})+'\n\n';
+  if(!data.length){msg+='Aucune disponibilite pour ce jour.';}
   else{
-    const byId={};data.forEach(d=>{const k=d.moniteur_id;if(!byId[k])byId[k]={prenom:d.prenom,nom:d.nom,creneaux:new Set(),notes:[]};(Array.isArray(d.creneaux)?d.creneaux:[]).forEach(c=>byId[k].creneaux.add(c));if(d.note)byId[k].notes.push(d.note);});
-    Object.values(byId).forEach(m=>{msg+=`ðŸ‘¤ *${m.prenom} ${m.nom}*\n`;m.creneaux.forEach(c=>{const cr=CRENEAUX[c];if(cr)msg+=`   â€¢ ${cr.nom} (${cr.h})\n`;});if(m.notes.length)msg+=`   _${m.notes.join(', ')}_\n`;msg+='\n';});
+    var byId={};
+    data.forEach(function(d){
+      var k=d.moniteur_id;
+      if(!byId[k])byId[k]={prenom:d.prenom,nom:d.nom,creneaux:[],notes:[]};
+      var crs=Array.isArray(d.creneaux)?d.creneaux:[];
+      crs.forEach(function(c){if(byId[k].creneaux.indexOf(c)<0)byId[k].creneaux.push(c);});
+      if(d.note)byId[k].notes.push(d.note);
+    });
+    Object.values(byId).forEach(function(m){
+      msg+=m.prenom+' '+m.nom+'\n';
+      m.creneaux.forEach(function(c){var cr=CRENEAUX[c];if(cr)msg+='  - '+cr.nom+' ('+cr.h+')\n';});
+      if(m.notes.length)msg+='  '+m.notes.join(', ')+'\n';
+      msg+='\n';
+    });
   }
-  msg+='_EnvoyÃ© via Snowlink_';waMsg=msg;
-  const prev=document.getElementById('wa-preview');
+  msg+='Envoye via Snowlink';
+  waMsg=msg;
+  var prev=document.getElementById('wa-preview');
   prev.style.color='#1a1a1a';prev.textContent=msg;
 }
-function envoyerWA(){if(!waMsg)genWA();const num=document.getElementById('wa-numero').value.replace(/\s/g,'');window.open(num?`https://wa.me/${num.replace('+','')}?text=${encodeURIComponent(waMsg)}`:`https://wa.me/?text=${encodeURIComponent(waMsg)}`);}
-function copierWA(){if(!waMsg)genWA();navigator.clipboard.writeText(waMsg).then(()=>toast('CopiÃ© âœ“')).catch(()=>toast('Copie impossible'));}
-
-async function ajouterMoniteur(){
-  const p=document.getElementById('m-prenom').value.trim();
-  const n=document.getElementById('m-nom').value.trim();
-  const tel=document.getElementById('m-tel').value.trim();
-  if(!p||!n){toast('PrÃ©nom et nom requis');return;}
-  if(cache.moniteurs.find(m=>m.prenom.toLowerCase()===p.toLowerCase()&&m.nom.toLowerCase()===n.toLowerCase())){toast('Ce moniteur existe dÃ©jÃ ');return;}
-  const row={id:Date.now().toString(),prenom:p,nom:n,tel};
-  setSyncStatus(null,'Sauvegardeâ€¦');
-  try{await sbFetch('moniteurs',{method:'POST',body:JSON.stringify(row)});cache.moniteurs.push(row);setSyncStatus(true,'Snowlink Â· synchronisÃ©');}
-  catch(e){setSyncStatus(false,'Erreur');}
-  document.getElementById('m-prenom').value='';document.getElementById('m-nom').value='';document.getElementById('m-tel').value='';
-  toast(`${p} ${n} ajoutÃ© âœ“`);renderListemoniteurs();renderChips();
+function envoyerWA(){
+  if(!waMsg)genWA();
+  var num=document.getElementById('wa-numero').value.replace(/\s/g,'');
+  window.open(num?'https://wa.me/'+num.replace('+','')+'?text='+encodeURIComponent(waMsg):'https://wa.me/?text='+encodeURIComponent(waMsg));
+}
+function copierWA(){
+  if(!waMsg)genWA();
+  navigator.clipboard.writeText(waMsg).then(function(){toast('Copie !');}).catch(function(){toast('Copie impossible');});
 }
 
-async function suppMoniteur(id){
-  const m=cache.moniteurs.find(x=>x.id===id);
-  if(!confirm(`Supprimer ${m?m.prenom+' '+m.nom:'ce moniteur'} ?`))return;
-  setSyncStatus(null,'Suppressionâ€¦');
-  try{
-    await sbFetch('moniteurs?id=eq.'+id,{method:'DELETE'});
-    await sbFetch('dispos?moniteur_id=eq.'+id,{method:'DELETE'});
-  }catch(e){}
-  cache.moniteurs=cache.moniteurs.filter(x=>x.id!==id);
-  cache.dispos=cache.dispos.filter(d=>d.moniteur_id!==id);
+function ajouterMoniteur(){
+  var p=document.getElementById('m-prenom').value.trim();
+  var n=document.getElementById('m-nom').value.trim();
+  var tel=document.getElementById('m-tel').value.trim();
+  if(!p||!n){toast('Prenom et nom requis');return;}
+  if(cache.moniteurs.find(function(m){return m.prenom.toLowerCase()===p.toLowerCase()&&m.nom.toLowerCase()===n.toLowerCase();})){toast('Ce moniteur existe deja');return;}
+  var newId=Date.now().toString();
+  var row={id:newId,prenom:p,nom:n,tel:tel};
+  setSyncStatus(null,'Sauvegarde...');
+  sbFetch('moniteurs',{method:'POST',body:JSON.stringify(row)}).then(function(){
+    cache.moniteurs.push(row);
+    setSyncStatus(true,'Snowlink synchronise');
+    document.getElementById('m-prenom').value='';
+    document.getElementById('m-nom').value='';
+    document.getElementById('m-tel').value='';
+    toast(p+' '+n+' ajoute !');
+    renderListeMoniteurs();renderChips();
+  }).catch(function(e){setSyncStatus(false,'Erreur: '+e.message);});
+}
+
+function suppMoniteur(id){
+  var m=cache.moniteurs.find(function(x){return x.id===id;});
+  if(!confirm('Supprimer '+(m?m.prenom+' '+m.nom:'ce moniteur')+'?'))return;
+  setSyncStatus(null,'Suppression...');
+  Promise.all([
+    sbFetch('moniteurs?id=eq.'+id,{method:'DELETE'}),
+    sbFetch('dispos?moniteur_id=eq.'+id,{method:'DELETE'})
+  ]).then(function(){}).catch(function(){});
+  cache.moniteurs=cache.moniteurs.filter(function(x){return x.id!==id;});
+  cache.dispos=cache.dispos.filter(function(d){return d.moniteur_id!==id;});
   if(selMoniteur&&selMoniteur.id===id)selMoniteur=null;
-  setSyncStatus(true,'Snowlink Â· synchronisÃ©');
-  renderListemoniteurs();renderChips();renderMesdispos();toast('Moniteur supprimÃ©');
+  setSyncStatus(true,'Snowlink synchronise');
+  renderListeMoniteurs();renderChips();renderMesDispos();toast('Moniteur supprime');
 }
 
 function saveAppUrl(){
-  const url=document.getElementById('app-url').value.trim();
-  localStorage.setItem('sl_appurl',url);toast('Lien enregistrÃ© âœ“');
+  var url=document.getElementById('app-url').value.trim();
+  localStorage.setItem('sl_appurl',url);toast('Lien enregistre !');
 }
 
-function renderListemoniteurs(){
-  const el=document.getElementById('liste-moniteurs');
+function renderListeMoniteurs(){
+  var el=document.getElementById('liste-moniteurs');
   if(!cache.moniteurs.length){el.innerHTML='<div class="empty" style="padding:1rem">Aucun moniteur.</div>';return;}
-  el.innerHTML=cache.moniteurs.map((m,i)=>{
-    const col=PALETTE[i%PALETTE.length];
-    return`<div class="moniteur-row">
-      <div class="avatar" style="width:30px;height:30px;font-size:11px;background:${col.dot};">${ini(m.prenom,m.nom)}</div>
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:13px;font-weight:600;">${m.prenom} ${m.nom}</div>
-        <div style="font-size:11px;color:#aaa;">${m.tel||'Pas de numÃ©ro'}</div>
-      </div>
-      <button class="btn btn-wa btn-sm" onclick="inviterWA('${m.id}')" title="WhatsApp"><i class="ti ti-brand-whatsapp"></i></button>
-      <button class="btn btn-sms btn-sm" style="margin-left:4px" onclick="inviterSMS('${m.id}')" title="SMS"><i class="ti ti-message"></i></button>
-      <button class="del-btn" onclick="suppMoniteur('${m.id}')">&#x2715;</button>
-    </div>`;
+  el.innerHTML=cache.moniteurs.map(function(m,i){
+    var col=PALETTE[i%PALETTE.length];
+    return '<div class="moniteur-row">'
+      +'<div class="avatar" style="width:30px;height:30px;font-size:11px;background:'+col.dot+';">'+ini(m.prenom,m.nom)+'</div>'
+      +'<div style="flex:1;min-width:0;">'
+      +'<div style="font-size:13px;font-weight:600;">'+m.prenom+' '+m.nom+'</div>'
+      +'<div style="font-size:11px;color:#aaa;">'+(m.tel||'Pas de numero')+'</div>'
+      +'</div>'
+      +'<button class="btn btn-wa btn-sm" onclick="inviterWA(\''+m.id+'\')" title="WhatsApp"><i class="ti ti-brand-whatsapp"></i></button>'
+      +'<button class="btn btn-sms btn-sm" style="margin-left:4px" onclick="inviterSMS(\''+m.id+'\')" title="SMS"><i class="ti ti-message"></i></button>'
+      +'<button class="del-btn" onclick="suppMoniteur(\''+m.id+'\')">&#x2715;</button>'
+      +'</div>';
   }).join('');
 }
 
 function showTab(name){
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
   document.getElementById('tab-'+name).classList.add('active');
-  const tabs=['saisie','recherche','equipe','whatsapp','admin'];
+  var tabs=['saisie','recherche','equipe','whatsapp','admin'];
   document.querySelectorAll('.tab')[tabs.indexOf(name)].classList.add('active');
-  if(name==='equipe'){setSyncStatus(null,'Actualisationâ€¦');loadAll().then(()=>renderEquipe());}
-  if(name==='saisie'){renderChips();renderMesdispos();}
+  if(name==='equipe'){setSyncStatus(null,'Actualisation...');loadAll().then(function(){renderEquipe();});}
+  if(name==='saisie'){renderChips();renderMesDispos();}
   if(name==='admin'){
     if(adminUnlocked){showAdminPanel();return;}
-    const hasPIN=getPINHash();
+    var hasPIN=getPINHash();
     document.getElementById('pin-setup').style.display=hasPIN?'none':'block';
     document.getElementById('pin-login').style.display=hasPIN?'block':'none';
     document.getElementById('admin-panel').style.display='none';
@@ -614,9 +650,11 @@ function showTab(name){
   }
 }
 
-const t=today();
-document.getElementById('s-debut').value=t;document.getElementById('s-fin').value=t;
-document.getElementById('r-debut').value=t;document.getElementById('r-fin').value=t;
+var t=today();
+document.getElementById('s-debut').value=t;
+document.getElementById('s-fin').value=t;
+document.getElementById('r-debut').value=t;
+document.getElementById('r-fin').value=t;
 document.getElementById('wa-date').value=tomorrow();
 loadAll();
 </script>
