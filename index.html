@@ -426,7 +426,7 @@ async function sauvegarder(){
   const row={id:Date.now().toString(),moniteur_id:selMoniteur.id,prenom:selMoniteur.prenom,nom:selMoniteur.nom,debut:d1,fin:d2,creneaux:JSON.stringify(selCreneaux),note};
   setSyncStatus(null,'Sauvegarde…');
   try{
-    await sbFetch('Dispos',{method:'POST',body:JSON.stringify(row)});
+    await sbFetch('dispos',{method:'POST',body:JSON.stringify(row)});
     cache.dispos.push({...row,creneaux:selCreneaux});
     setSyncStatus(true,'Snowlink · synchronisé');
   }catch(e){setSyncStatus(false,'Erreur sauvegarde');}
@@ -552,7 +552,7 @@ async function ajouterMoniteur(){
   if(cache.moniteurs.find(m=>m.prenom.toLowerCase()===p.toLowerCase()&&m.nom.toLowerCase()===n.toLowerCase())){toast('Ce moniteur existe déjà');return;}
   const row={id:Date.now().toString(),prenom:p,nom:n,tel};
   setSyncStatus(null,'Sauvegarde…');
-  try{await sbFetch('Moniteurs',{method:'POST',body:JSON.stringify(row)});cache.moniteurs.push(row);setSyncStatus(true,'Snowlink · synchronisé');}
+  try{await sbFetch('moniteurs',{method:'POST',body:JSON.stringify(row)});cache.moniteurs.push(row);setSyncStatus(true,'Snowlink · synchronisé');}
   catch(e){setSyncStatus(false,'Erreur');}
   document.getElementById('m-prenom').value='';document.getElementById('m-nom').value='';document.getElementById('m-tel').value='';
   toast(`${p} ${n} ajouté ✓`);renderListeMoniteurs();renderChips();
