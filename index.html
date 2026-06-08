@@ -273,7 +273,7 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
       <button class="btn btn-green" onclick="ajouterMoniteur()"><i class="ti ti-plus"></i> Ajouter</button>
     </div>
 
-    <div style="font-size:14px;font-weight:600;color:#1a1a1a;margin-bottom:10px;">Moniteurs inscrits</div>
+    <div style="font-size:14px;font-weight:600;color:#1a1a1a;margin-bottom:10px;">moniteurs inscrits</div>
     <div class="card" id="liste-moniteurs" style="padding:8px 14px;"></div>
 
     <div class="card" style="margin-top:8px;">
@@ -338,7 +338,7 @@ async function sbFetch(path,options={}){
 async function loadAll(){
   setSyncStatus(null,'Synchronisation Snowlinkâ€¦');
   try{
-    const [m,d]=await Promise.all([sbFetch('Moniteurs?select=*&order=created_at.asc'),sbFetch('Dispos?select=*&order=created_at.asc')]);
+    const [m,d]=await Promise.all([sbFetch('moniteurs?select=*&order=created_at.asc'),sbFetch('dispos?select=*&order=created_at.asc')]);
     cache.moniteurs=m||[];
     cache.dispos=(d||[]).map(r=>({...r,creneaux:JSON.parse(r.creneaux||'[]')}));
     setSyncStatus(true,'Snowlink Â· synchronisÃ©');
@@ -346,7 +346,7 @@ async function loadAll(){
     setSyncStatus(false,'Hors ligne');
     try{cache.moniteurs=JSON.parse(localStorage.getItem('sl_m')||'[]');cache.dispos=JSON.parse(localStorage.getItem('sl_d')||'[]');}catch(x){}
   }
-  renderChips();renderListeMoniteurs();renderMesDispos();
+  renderChips();renderListemoniteurs();renderMesdispos();
   const u=localStorage.getItem('sl_appurl');if(u)document.getElementById('app-url').value=u;
 }
 
@@ -379,7 +379,7 @@ function showAdminPanel(){
   document.getElementById('pin-login').style.display='none';
   document.getElementById('admin-panel').style.display='block';
   document.getElementById('admin-badge').style.display='inline-flex';
-  renderListeMoniteurs();
+  renderListemoniteurs();
 }
 function adminLogout(){
   adminUnlocked=false;
@@ -407,7 +407,7 @@ function renderChips(){
   }).join('');
 }
 
-function selectMoniteur(id){selMoniteur=cache.moniteurs.find(x=>x.id===id)||null;renderChips();renderMesDispos();}
+function selectMoniteur(id){selMoniteur=cache.moniteurs.find(x=>x.id===id)||null;renderChips();renderMesdispos();}
 
 function toggleCr(btn){
   const v=btn.dataset.v;
@@ -431,10 +431,10 @@ async function sauvegarder(){
     setSyncStatus(true,'Snowlink Â· synchronisÃ©');
   }catch(e){setSyncStatus(false,'Erreur sauvegarde');}
   selCreneaux=[];document.querySelectorAll('#cr-grid .cr-btn').forEach(b=>b.classList.remove('sel'));
-  document.getElementById('s-note').value='';toast('DisponibilitÃ© enregistrÃ©e âœ“');renderMesDispos();
+  document.getElementById('s-note').value='';toast('DisponibilitÃ© enregistrÃ©e âœ“');renderMesdispos();
 }
 
-function renderMesDispos(){
+function renderMesdispos(){
   if(!selMoniteur){document.getElementById('mes-dispos-wrap').style.display='none';return;}
   const data=cache.dispos.filter(d=>d.moniteur_id===selMoniteur.id);
   const wrap=document.getElementById('mes-dispos-wrap');
@@ -455,10 +455,10 @@ function renderMesDispos(){
 async function suppDispo(id){
   if(!confirm('Supprimer cette disponibilitÃ© ?'))return;
   setSyncStatus(null,'Suppressionâ€¦');
-  try{await sbFetch('Dispos?id=eq.'+id,{method:'DELETE'});}catch(e){}
+  try{await sbFetch('dispos?id=eq.'+id,{method:'DELETE'});}catch(e){}
   cache.dispos=cache.dispos.filter(d=>d.id!==id);
   setSyncStatus(true,'Snowlink Â· synchronisÃ©');
-  renderMesDispos();
+  renderMesdispos();
   if(document.getElementById('tab-equipe').classList.contains('active'))renderEquipe();
 }
 
@@ -531,7 +531,7 @@ function inviterSMS(id){
 function genWA(){
   const date=document.getElementById('wa-date').value||tomorrow();
   const data=cache.dispos.filter(d=>d.debut<=date&&d.fin>=date);
-  let msg=`â„ï¸ *Snowlink â€“ Dispos ESF*\n${new Date(date+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})}\n\n`;
+  let msg=`â„ï¸ *Snowlink â€“ dispos ESF*\n${new Date(date+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})}\n\n`;
   if(!data.length){msg+='Aucune disponibilitÃ© pour ce jour.';}
   else{
     const byId={};data.forEach(d=>{const k=d.moniteur_id;if(!byId[k])byId[k]={prenom:d.prenom,nom:d.nom,creneaux:new Set(),notes:[]};(Array.isArray(d.creneaux)?d.creneaux:[]).forEach(c=>byId[k].creneaux.add(c));if(d.note)byId[k].notes.push(d.note);});
@@ -555,7 +555,7 @@ async function ajouterMoniteur(){
   try{await sbFetch('moniteurs',{method:'POST',body:JSON.stringify(row)});cache.moniteurs.push(row);setSyncStatus(true,'Snowlink Â· synchronisÃ©');}
   catch(e){setSyncStatus(false,'Erreur');}
   document.getElementById('m-prenom').value='';document.getElementById('m-nom').value='';document.getElementById('m-tel').value='';
-  toast(`${p} ${n} ajoutÃ© âœ“`);renderListeMoniteurs();renderChips();
+  toast(`${p} ${n} ajoutÃ© âœ“`);renderListemoniteurs();renderChips();
 }
 
 async function suppMoniteur(id){
@@ -563,14 +563,14 @@ async function suppMoniteur(id){
   if(!confirm(`Supprimer ${m?m.prenom+' '+m.nom:'ce moniteur'} ?`))return;
   setSyncStatus(null,'Suppressionâ€¦');
   try{
-    await sbFetch('Moniteurs?id=eq.'+id,{method:'DELETE'});
-    await sbFetch('Dispos?moniteur_id=eq.'+id,{method:'DELETE'});
+    await sbFetch('moniteurs?id=eq.'+id,{method:'DELETE'});
+    await sbFetch('dispos?moniteur_id=eq.'+id,{method:'DELETE'});
   }catch(e){}
   cache.moniteurs=cache.moniteurs.filter(x=>x.id!==id);
   cache.dispos=cache.dispos.filter(d=>d.moniteur_id!==id);
   if(selMoniteur&&selMoniteur.id===id)selMoniteur=null;
   setSyncStatus(true,'Snowlink Â· synchronisÃ©');
-  renderListeMoniteurs();renderChips();renderMesDispos();toast('Moniteur supprimÃ©');
+  renderListemoniteurs();renderChips();renderMesdispos();toast('Moniteur supprimÃ©');
 }
 
 function saveAppUrl(){
@@ -578,7 +578,7 @@ function saveAppUrl(){
   localStorage.setItem('sl_appurl',url);toast('Lien enregistrÃ© âœ“');
 }
 
-function renderListeMoniteurs(){
+function renderListemoniteurs(){
   const el=document.getElementById('liste-moniteurs');
   if(!cache.moniteurs.length){el.innerHTML='<div class="empty" style="padding:1rem">Aucun moniteur.</div>';return;}
   el.innerHTML=cache.moniteurs.map((m,i)=>{
@@ -603,7 +603,7 @@ function showTab(name){
   const tabs=['saisie','recherche','equipe','whatsapp','admin'];
   document.querySelectorAll('.tab')[tabs.indexOf(name)].classList.add('active');
   if(name==='equipe'){setSyncStatus(null,'Actualisationâ€¦');loadAll().then(()=>renderEquipe());}
-  if(name==='saisie'){renderChips();renderMesDispos();}
+  if(name==='saisie'){renderChips();renderMesdispos();}
   if(name==='admin'){
     if(adminUnlocked){showAdminPanel();return;}
     const hasPIN=getPINHash();
