@@ -271,9 +271,6 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
       </div>
       <label>Telephone</label>
       <input type="tel" id="m-tel" placeholder="+33612345678"/>
-      <label>PIN du moniteur (4 chiffres)</label>
-      <input type="password" id="m-pin" placeholder="ex: 1234" maxlength="4" inputmode="numeric"/>
-      <p style="font-size:11px;color:#aaa;margin-top:4px;">Le moniteur utilisera ce PIN pour acceder a son profil.</p>
       <br/>
       <button class="btn btn-green" onclick="ajouterMoniteur()"><i class="ti ti-plus"></i> Ajouter</button>
     </div>
@@ -626,7 +623,7 @@ function renderEquipe(){
 
 function buildInviteMsg(m){
   var url=localStorage.getItem('sl_appurl')||APP_URL;
-  return 'Bonjour '+m.prenom+' !\n\nTu es invite(e) a rejoindre Snowlink, l\'app de disponibilites de notre equipe ESF !\n\nAccede a l\'app ici :\n'+url+'\n\nA bientot sur les pistes ! ';
+  return 'Bonjour '+m.prenom+' !\n\nTu es invite(e) a rejoindre Snowlink, l\'app de disponibilites de notre equipe !\n\nAccede a l\'app ici :\n'+url+'\n\nRejoins-nous vite !';
 }
 function inviterWA(id){
   var m=cache.moniteurs.find(function(x){return x.id===id;});if(!m)return;
@@ -690,12 +687,10 @@ function ajouterMoniteur(){
   setSyncStatus(null,'Sauvegarde...');
   sbFetch('moniteurs',{method:'POST',body:JSON.stringify(row)}).then(function(){
     cache.moniteurs.push(row);
-    localStorage.setItem('sl_mpin_'+newId, hashPIN(pin));
     setSyncStatus(true,'Snowlink synchronise');
     document.getElementById('m-prenom').value='';
     document.getElementById('m-nom').value='';
     document.getElementById('m-tel').value='';
-    document.getElementById('m-pin').value='';
     toast(p+' '+n+' ajoute !');
     renderListeMoniteurs();renderChips();
   }).catch(function(e){setSyncStatus(false,'Erreur: '+e.message);});
