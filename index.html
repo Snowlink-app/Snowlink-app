@@ -76,6 +76,7 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
 .setup-box{background:#E6F1FB;border:0.5px solid #85B7EB;border-radius:10px;padding:12px 14px;margin-bottom:12px;}
 .wa-preview{background:#fafafa;border:0.5px solid #e8e8e8;border-radius:10px;padding:12px;margin-top:10px;font-size:12px;color:#555;white-space:pre-wrap;line-height:1.6;min-height:50px;}
 .btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.pin-moniteur-screen{background:#fff;border-radius:12px;padding:20px;margin-bottom:12px;text-align:center;}
 </style>
 </head>
 <body>
@@ -100,7 +101,7 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
   </div>
   <div>
     <div class="app-title">Snowlink</div>
-    <div class="app-sub">Disponibilités ESF</div>
+    <div class="app-sub">Disponibilites ESF</div>
   </div>
 </div>
 
@@ -117,36 +118,68 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
   <div class="tab" onclick="showTab('admin')"><i class="ti ti-lock"></i>Admin</div>
 </div>
 
+<!-- SAISIE -->
 <div id="tab-saisie" class="section active">
-  <div class="section-title">Saisir une disponibilite</div>
-  <div class="card">
-    <label>Je suis</label>
-    <div id="chips-saisie"></div>
-    <p class="hint">Pas encore inscrit ? Contactez l'administratrice.</p>
-    <div class="row2" style="margin-top:12px;">
-      <div><label>Du</label><input type="date" id="s-debut"/></div>
-      <div><label>Au</label><input type="date" id="s-fin"/></div>
+  <div class="section-title">Mes disponibilites</div>
+
+  <!-- PIN moniteur -->
+  <div id="moniteur-pin-wrap">
+    <div class="card">
+      <label>Je suis</label>
+      <div id="chips-saisie"></div>
+      <p class="hint">Selectionnez votre nom puis entrez votre PIN.</p>
     </div>
-    <label>Creneau(x)</label>
-    <div class="creneaux-grid" id="cr-grid">
-      <button class="cr-btn" data-v="journee" onclick="toggleCr(this)"><span class="cr-nom">Journee</span><span class="cr-h">9h30 - 16h30</span></button>
-      <button class="cr-btn" data-v="matin" onclick="toggleCr(this)"><span class="cr-nom">Matin</span><span class="cr-h">9h30 - 12h00</span></button>
-      <button class="cr-btn" data-v="midi" onclick="toggleCr(this)"><span class="cr-nom">Mi-journee</span><span class="cr-h">12h00 - 14h00</span></button>
-      <button class="cr-btn" data-v="gmatin" onclick="toggleCr(this)"><span class="cr-nom">Grand matin</span><span class="cr-h">9h30 - 13h30</span></button>
-      <button class="cr-btn" data-v="aprem" onclick="toggleCr(this)"><span class="cr-nom">Apres-midi</span><span class="cr-h">14h30 - 16h30</span></button>
-      <button class="cr-btn" data-v="gaprem" onclick="toggleCr(this)"><span class="cr-nom">Grand apres-midi</span><span class="cr-h">14h00 - 17h00</span></button>
+    <div class="card" id="moniteur-pin-box" style="display:none">
+      <div style="text-align:center;margin-bottom:8px;">
+        <span id="moniteur-pin-nom" style="font-size:14px;font-weight:600;color:#1a1a1a;"></span>
+        <p style="font-size:12px;color:#888;margin-top:4px;">Entrez votre PIN</p>
+      </div>
+      <div class="pin-inputs" style="justify-content:center;">
+        <input class="pin-input" type="password" maxlength="1" inputmode="numeric" id="mp0" oninput="monPinNext(0)"/>
+        <input class="pin-input" type="password" maxlength="1" inputmode="numeric" id="mp1" oninput="monPinNext(1)"/>
+        <input class="pin-input" type="password" maxlength="1" inputmode="numeric" id="mp2" oninput="monPinNext(2)"/>
+        <input class="pin-input" type="password" maxlength="1" inputmode="numeric" id="mp3" oninput="monPinNext(3)"/>
+      </div>
+      <p id="mon-pin-error" style="font-size:12px;color:#A32D2D;min-height:18px;text-align:center;"></p>
+      <div style="text-align:center;">
+        <button class="btn btn-ghost btn-sm" onclick="annulerSelMoniteur()">Annuler</button>
+      </div>
     </div>
-    <label>Note (optionnel)</label>
-    <input type="text" id="s-note" placeholder="Ex : sauf mauvaise meteo..."/>
-    <br/>
-    <button class="btn btn-green" onclick="sauvegarder()"><i class="ti ti-check"></i> Enregistrer</button>
   </div>
-  <div id="mes-dispos-wrap" style="display:none">
-    <div style="font-size:14px;font-weight:600;margin-bottom:10px;">Mes disponibilites</div>
-    <div id="mes-dispos-list"></div>
+
+  <!-- Formulaire dispo (apres PIN valide) -->
+  <div id="dispo-form" style="display:none;">
+    <div class="card">
+      <div id="moniteur-connecte-badge" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <span id="moniteur-connecte-nom" style="font-size:14px;font-weight:600;"></span>
+        <button class="btn btn-ghost btn-sm" onclick="deconnecterMoniteur()" style="margin-top:0;">Changer</button>
+      </div>
+      <div class="row2">
+        <div><label>Du</label><input type="date" id="s-debut"/></div>
+        <div><label>Au</label><input type="date" id="s-fin"/></div>
+      </div>
+      <label>Creneau(x)</label>
+      <div class="creneaux-grid" id="cr-grid">
+        <button class="cr-btn" data-v="journee" onclick="toggleCr(this)"><span class="cr-nom">Journee</span><span class="cr-h">9h30 - 16h30</span></button>
+        <button class="cr-btn" data-v="matin" onclick="toggleCr(this)"><span class="cr-nom">Matin</span><span class="cr-h">9h30 - 12h00</span></button>
+        <button class="cr-btn" data-v="midi" onclick="toggleCr(this)"><span class="cr-nom">Mi-journee</span><span class="cr-h">12h00 - 14h00</span></button>
+        <button class="cr-btn" data-v="gmatin" onclick="toggleCr(this)"><span class="cr-nom">Grand matin</span><span class="cr-h">9h30 - 13h30</span></button>
+        <button class="cr-btn" data-v="aprem" onclick="toggleCr(this)"><span class="cr-nom">Apres-midi</span><span class="cr-h">14h30 - 16h30</span></button>
+        <button class="cr-btn" data-v="gaprem" onclick="toggleCr(this)"><span class="cr-nom">Grand apres-midi</span><span class="cr-h">14h00 - 17h00</span></button>
+      </div>
+      <label>Note (optionnel)</label>
+      <input type="text" id="s-note" placeholder="Ex : sauf mauvaise meteo..."/>
+      <br/>
+      <button class="btn btn-green" onclick="sauvegarder()"><i class="ti ti-check"></i> Enregistrer</button>
+    </div>
+    <div id="mes-dispos-wrap" style="display:none">
+      <div style="font-size:14px;font-weight:600;margin-bottom:10px;">Mes disponibilites</div>
+      <div id="mes-dispos-list"></div>
+    </div>
   </div>
 </div>
 
+<!-- RECHERCHE -->
 <div id="tab-recherche" class="section">
   <div class="section-title">Qui est disponible ?</div>
   <div class="card">
@@ -170,12 +203,14 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
   <div id="resultats"></div>
 </div>
 
+<!-- EQUIPE -->
 <div id="tab-equipe" class="section">
   <div class="section-title">Toutes les disponibilites</div>
   <div id="legende-equipe" class="legend-row"></div>
   <div id="vue-equipe"><div class="empty">Chargement...</div></div>
 </div>
 
+<!-- WHATSAPP -->
 <div id="tab-whatsapp" class="section">
   <div class="section-title">Partager sur WhatsApp</div>
   <div class="card">
@@ -192,6 +227,7 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
   </div>
 </div>
 
+<!-- ADMIN -->
 <div id="tab-admin" class="section">
   <div style="display:flex;align-items:center;margin-bottom:14px;">
     <span class="section-title" style="margin-bottom:0">Admin</span>
@@ -235,6 +271,9 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
       </div>
       <label>Telephone</label>
       <input type="tel" id="m-tel" placeholder="+33612345678"/>
+      <label>PIN du moniteur (4 chiffres)</label>
+      <input type="password" id="m-pin" placeholder="ex: 1234" maxlength="4" inputmode="numeric"/>
+      <p style="font-size:11px;color:#aaa;margin-top:4px;">Le moniteur utilisera ce PIN pour acceder a son profil.</p>
       <br/>
       <button class="btn btn-green" onclick="ajouterMoniteur()"><i class="ti ti-plus"></i> Ajouter</button>
     </div>
@@ -243,7 +282,7 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
     <div class="card" style="margin-top:8px;">
       <div style="font-size:13px;font-weight:600;margin-bottom:8px;">Lien de l'application</div>
       <label>URL Snowlink</label>
-      <input type="url" id="app-url" placeholder="https://snowlink-app.github.io/snowlink-app"/>
+      <input type="url" id="app-url" value="https://snowlink-app.github.io/snowlink-app"/>
       <br/>
       <button class="btn btn-ghost" onclick="saveAppUrl()"><i class="ti ti-check"></i> Enregistrer</button>
     </div>
@@ -259,6 +298,7 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
 <script>
 var SURL='https://dblvhotxhoyvruunxyef.supabase.co';
 var SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRibHZob3R4aG95dnJ1dW54eWVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NjMwMTIsImV4cCI6MjA5NjMzOTAxMn0.54kt4V0kN4N-8Bb6L2uyrTTnmMTUlhYxiznqEXMnkEo';
+var APP_URL='https://snowlink-app.github.io/snowlink-app';
 
 var PALETTE=[
   {bg:'#EEEDFE',border:'#AFA9EC',text:'#3C3489',dot:'#534AB7'},
@@ -279,15 +319,33 @@ var CRENEAUX={
   gaprem:{nom:'Grand ap-m.',h:'14h00-17h00',cls:'b-gaprem'}
 };
 
+// Logique des creneaux : quelles dispos couvrent quel creneau recherche
+function couvre(dispoCreneaux, recherche) {
+  if(recherche === 'tous') return true;
+  var crs = Array.isArray(dispoCreneaux) ? dispoCreneaux : [];
+  // Journee couvre tout
+  if(crs.indexOf('journee') >= 0) return true;
+  // Grand matin couvre matin et gmatin
+  if(recherche === 'matin' && crs.indexOf('gmatin') >= 0) return true;
+  if(recherche === 'gmatin' && crs.indexOf('gmatin') >= 0) return true;
+  // Grand apres-midi couvre apres-midi et gaprem
+  if(recherche === 'aprem' && crs.indexOf('gaprem') >= 0) return true;
+  if(recherche === 'gaprem' && crs.indexOf('gaprem') >= 0) return true;
+  // Recherche exacte
+  return crs.indexOf(recherche) >= 0;
+}
+
 function getColor(id){var i=cache.moniteurs.findIndex(function(m){return m.id===id;});return PALETTE[i>=0?i%PALETTE.length:0];}
 function ini(p,n){return((p||'?')[0]+(n||'?')[0]).toUpperCase();}
 function fd(s){if(!s)return'';var d=new Date(s+'T00:00:00');return d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});}
 function today(){return new Date().toISOString().split('T')[0];}
 function tomorrow(){var d=new Date();d.setDate(d.getDate()+1);return d.toISOString().split('T')[0];}
+function hashPIN(pin){var h=5381;for(var i=0;i<pin.length;i++)h=((h<<5)+h)+pin.charCodeAt(i);return(h>>>0).toString(16);}
 
 var selMoniteur=null,selCreneaux=[],rechCr='tous',waMsg='';
 var cache={moniteurs:[],dispos:[]};
 var adminUnlocked=false;
+var moniteurConnecte=null;
 
 function setSyncStatus(ok,msg){
   var dot=document.getElementById('sync-dot');
@@ -314,7 +372,7 @@ function sbFetch(path,options){
 }
 
 function loadAll(){
-  setSyncStatus(null,'Synchronisation Snowlink...');
+  setSyncStatus(null,'Synchronisation...');
   return Promise.all([
     sbFetch('moniteurs?select=*&order=created_at.asc'),
     sbFetch('dispos?select=*&order=created_at.asc')
@@ -336,9 +394,8 @@ function loadAll(){
 function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2500);}
 function badgeCr(v){var c=CRENEAUX[v];return c?'<span class="badge '+c.cls+'">'+c.nom+'</span>':'';}
 
+// PIN ADMIN
 function getPINHash(){return localStorage.getItem('sl_pin')||null;}
-function hashPIN(pin){var h=5381;for(var i=0;i<pin.length;i++)h=((h<<5)+h)+pin.charCodeAt(i);return(h>>>0).toString(16);}
-
 function pinSetupNext(i){if(document.getElementById('ps'+i).value&&i<3)document.getElementById('ps'+(i+1)).focus();}
 function pinLoginNext(i){
   if(document.getElementById('pl'+i).value&&i<3)document.getElementById('pl'+(i+1)).focus();
@@ -380,21 +437,70 @@ function showAdminLogin(){
   setTimeout(function(){document.getElementById('pl0').focus();},100);
 }
 
+// PIN MONITEUR
 function renderChips(){
   var c=document.getElementById('chips-saisie');
   if(!cache.moniteurs.length){c.innerHTML='<span style="font-size:12px;color:#aaa">Aucun moniteur inscrit.</span>';return;}
   c.innerHTML=cache.moniteurs.map(function(m,i){
     var col=PALETTE[i%PALETTE.length];
-    var isSel=selMoniteur&&selMoniteur.id===m.id;
-    return '<span class="profil-chip" style="'+(isSel?'background:'+col.bg+';border-color:'+col.border+';color:'+col.text+';font-weight:500':'')+'" onclick="selectMoniteur(\''+m.id+'\')">'
+    return '<span class="profil-chip" style="background:'+col.bg+';border-color:'+col.border+';color:'+col.text+';" onclick="selectionnerMoniteur(\''+m.id+'\')">'
       +'<span style="width:8px;height:8px;border-radius:50%;background:'+col.dot+';display:inline-block;flex-shrink:0"></span>'
       +m.prenom+' '+m.nom+'</span>';
   }).join('');
 }
 
-function selectMoniteur(id){
-  selMoniteur=cache.moniteurs.find(function(x){return x.id===id;})||null;
-  renderChips();renderMesDispos();
+function selectionnerMoniteur(id){
+  var m=cache.moniteurs.find(function(x){return x.id===id;});
+  if(!m)return;
+  selMoniteur=m;
+  document.getElementById('moniteur-pin-nom').textContent=m.prenom+' '+m.nom;
+  document.getElementById('moniteur-pin-box').style.display='block';
+  for(var i=0;i<4;i++)document.getElementById('mp'+i).value='';
+  document.getElementById('mon-pin-error').textContent='';
+  setTimeout(function(){document.getElementById('mp0').focus();},100);
+}
+
+function monPinNext(i){
+  if(document.getElementById('mp'+i).value&&i<3)document.getElementById('mp'+(i+1)).focus();
+  if(i===3&&document.getElementById('mp'+i).value)verifierPinMoniteur();
+}
+
+function verifierPinMoniteur(){
+  if(!selMoniteur)return;
+  var pin='';for(var i=0;i<4;i++)pin+=document.getElementById('mp'+i).value;
+  var storedHash=localStorage.getItem('sl_mpin_'+selMoniteur.id);
+  if(!storedHash){
+    // Premier acces : enregistrer le PIN
+    localStorage.setItem('sl_mpin_'+selMoniteur.id, hashPIN(pin));
+    ouvrirFormulaireMoniteur();
+    toast('PIN enregistre pour '+selMoniteur.prenom+' !');
+  } else if(hashPIN(pin)===storedHash){
+    ouvrirFormulaireMoniteur();
+  } else {
+    document.getElementById('mon-pin-error').textContent='Code incorrect.';
+    for(var i=0;i<4;i++){var el=document.getElementById('mp'+i);el.value='';el.style.borderColor='#E24B4A';}
+    document.getElementById('mp0').focus();
+    setTimeout(function(){for(var i=0;i<4;i++)document.getElementById('mp'+i).style.borderColor='';},1500);
+  }
+}
+
+function ouvrirFormulaireMoniteur(){
+  moniteurConnecte=selMoniteur;
+  document.getElementById('moniteur-pin-box').style.display='none';
+  document.getElementById('dispo-form').style.display='block';
+  document.getElementById('moniteur-connecte-nom').textContent=moniteurConnecte.prenom+' '+moniteurConnecte.nom;
+  renderMesDispos();
+}
+
+function annulerSelMoniteur(){
+  selMoniteur=null;
+  document.getElementById('moniteur-pin-box').style.display='none';
+}
+
+function deconnecterMoniteur(){
+  moniteurConnecte=null;selMoniteur=null;
+  document.getElementById('dispo-form').style.display='none';
+  document.getElementById('moniteur-pin-box').style.display='none';
 }
 
 function toggleCr(btn){
@@ -415,16 +521,16 @@ function selRech(btn){
 }
 
 function sauvegarder(){
-  if(!selMoniteur){toast('Selectionnez votre nom');return;}
+  if(!moniteurConnecte){toast('Connectez-vous dabord');return;}
   var d1=document.getElementById('s-debut').value,d2=document.getElementById('s-fin').value;
   if(!d1||!d2){toast('Choisissez les dates');return;}
   if(!selCreneaux.length){toast('Choisissez un creneau');return;}
   var note=document.getElementById('s-note').value.trim();
   var newId=Date.now().toString();
-  var row={id:newId,moniteur_id:selMoniteur.id,prenom:selMoniteur.prenom,nom:selMoniteur.nom,debut:d1,fin:d2,creneaux:JSON.stringify(selCreneaux),note:note};
+  var row={id:newId,moniteur_id:moniteurConnecte.id,prenom:moniteurConnecte.prenom,nom:moniteurConnecte.nom,debut:d1,fin:d2,creneaux:JSON.stringify(selCreneaux),note:note};
   setSyncStatus(null,'Sauvegarde...');
   sbFetch('dispos',{method:'POST',body:JSON.stringify(row)}).then(function(){
-    var localRow={id:newId,moniteur_id:selMoniteur.id,prenom:selMoniteur.prenom,nom:selMoniteur.nom,debut:d1,fin:d2,creneaux:selCreneaux,note:note};
+    var localRow={id:newId,moniteur_id:moniteurConnecte.id,prenom:moniteurConnecte.prenom,nom:moniteurConnecte.nom,debut:d1,fin:d2,creneaux:selCreneaux,note:note};
     cache.dispos.push(localRow);
     setSyncStatus(true,'Snowlink synchronise');
     selCreneaux=[];
@@ -432,15 +538,15 @@ function sauvegarder(){
     document.getElementById('s-note').value='';
     toast('Disponibilite enregistree !');
     renderMesDispos();
-  }).catch(function(){setSyncStatus(false,'Erreur sauvegarde');});
+  }).catch(function(e){setSyncStatus(false,'Erreur: '+e.message);});
 }
 
 function renderMesDispos(){
-  if(!selMoniteur){document.getElementById('mes-dispos-wrap').style.display='none';return;}
-  var data=cache.dispos.filter(function(d){return d.moniteur_id===selMoniteur.id;});
+  if(!moniteurConnecte){document.getElementById('mes-dispos-wrap').style.display='none';return;}
+  var data=cache.dispos.filter(function(d){return d.moniteur_id===moniteurConnecte.id;});
   var wrap=document.getElementById('mes-dispos-wrap');
   if(!data.length){wrap.style.display='none';return;}
-  var col=getColor(selMoniteur.id);
+  var col=getColor(moniteurConnecte.id);
   wrap.style.display='block';
   document.getElementById('mes-dispos-list').innerHTML=data.map(function(d){
     var crs=Array.isArray(d.creneaux)?d.creneaux:[];
@@ -454,7 +560,6 @@ function renderMesDispos(){
 
 function suppDispo(id){
   if(!confirm('Supprimer cette disponibilite ?'))return;
-  setSyncStatus(null,'Suppression...');
   sbFetch('dispos?id=eq.'+id,{method:'DELETE'}).then(function(){}).catch(function(){});
   cache.dispos=cache.dispos.filter(function(d){return d.id!==id;});
   setSyncStatus(true,'Snowlink synchronise');
@@ -467,9 +572,7 @@ function rechercher(){
   if(!d1||!d2){toast('Choisissez les dates');return;}
   var data=cache.dispos.filter(function(d){
     if(d.debut>d2||d.fin<d1)return false;
-    if(rechCr==='tous')return true;
-    var crs=Array.isArray(d.creneaux)?d.creneaux:[];
-    return crs.indexOf(rechCr)>=0;
+    return couvre(d.creneaux, rechCr);
   });
   if(!data.length){res.innerHTML='<div class="empty">Aucun moniteur disponible.</div>';return;}
   var byId={};
@@ -491,7 +594,8 @@ function rechercher(){
 }
 
 function renderEquipe(){
-  var ids=[...new Set(cache.dispos.map(function(d){return d.moniteur_id;}))];
+  var ids=[];
+  cache.dispos.forEach(function(d){if(ids.indexOf(d.moniteur_id)<0)ids.push(d.moniteur_id);});
   var leg=document.getElementById('legende-equipe');
   leg.innerHTML=ids.map(function(id){
     var m=cache.moniteurs.find(function(x){return x.id===id;});
@@ -520,20 +624,19 @@ function renderEquipe(){
   }).join('');
 }
 
-function buildInviteMsg(m,appUrl){
-  return 'Bonjour '+m.prenom+' !\n\nTu es invite(e) a rejoindre Snowlink, l\'app de disponibilites de notre equipe ESF !\n\nAccede a l\'app ici :\n'+(appUrl||'[lien a configurer]')+'\n\nA bientot sur les pistes !';
+function buildInviteMsg(m){
+  var url=localStorage.getItem('sl_appurl')||APP_URL;
+  return 'Bonjour '+m.prenom+' !\n\nTu es invite(e) a rejoindre Snowlink, l\'app de disponibilites de notre equipe ESF !\n\nAccede a l\'app ici :\n'+url+'\n\nA bientot sur les pistes ! ';
 }
 function inviterWA(id){
   var m=cache.moniteurs.find(function(x){return x.id===id;});if(!m)return;
-  var url=localStorage.getItem('sl_appurl')||'';
-  var msg=buildInviteMsg(m,url);
+  var msg=buildInviteMsg(m);
   var num=(m.tel||'').replace(/\s/g,'');
   window.open(num?'https://wa.me/'+num.replace('+','')+'?text='+encodeURIComponent(msg):'https://wa.me/?text='+encodeURIComponent(msg));
 }
 function inviterSMS(id){
   var m=cache.moniteurs.find(function(x){return x.id===id;});if(!m)return;
-  var url=localStorage.getItem('sl_appurl')||'';
-  var msg=buildInviteMsg(m,url);
+  var msg=buildInviteMsg(m);
   var num=(m.tel||'').replace(/\s/g,'');
   window.open('sms:'+num+'?body='+encodeURIComponent(msg));
 }
@@ -578,17 +681,21 @@ function ajouterMoniteur(){
   var p=document.getElementById('m-prenom').value.trim();
   var n=document.getElementById('m-nom').value.trim();
   var tel=document.getElementById('m-tel').value.trim();
+  var pin=document.getElementById('m-pin').value.trim();
   if(!p||!n){toast('Prenom et nom requis');return;}
+  if(!pin||pin.length!==4){toast('PIN 4 chiffres requis');return;}
   if(cache.moniteurs.find(function(m){return m.prenom.toLowerCase()===p.toLowerCase()&&m.nom.toLowerCase()===n.toLowerCase();})){toast('Ce moniteur existe deja');return;}
   var newId=Date.now().toString();
   var row={id:newId,prenom:p,nom:n,tel:tel};
   setSyncStatus(null,'Sauvegarde...');
   sbFetch('moniteurs',{method:'POST',body:JSON.stringify(row)}).then(function(){
     cache.moniteurs.push(row);
+    localStorage.setItem('sl_mpin_'+newId, hashPIN(pin));
     setSyncStatus(true,'Snowlink synchronise');
     document.getElementById('m-prenom').value='';
     document.getElementById('m-nom').value='';
     document.getElementById('m-tel').value='';
+    document.getElementById('m-pin').value='';
     toast(p+' '+n+' ajoute !');
     renderListeMoniteurs();renderChips();
   }).catch(function(e){setSyncStatus(false,'Erreur: '+e.message);});
@@ -597,16 +704,16 @@ function ajouterMoniteur(){
 function suppMoniteur(id){
   var m=cache.moniteurs.find(function(x){return x.id===id;});
   if(!confirm('Supprimer '+(m?m.prenom+' '+m.nom:'ce moniteur')+'?'))return;
-  setSyncStatus(null,'Suppression...');
   Promise.all([
     sbFetch('moniteurs?id=eq.'+id,{method:'DELETE'}),
     sbFetch('dispos?moniteur_id=eq.'+id,{method:'DELETE'})
   ]).then(function(){}).catch(function(){});
   cache.moniteurs=cache.moniteurs.filter(function(x){return x.id!==id;});
   cache.dispos=cache.dispos.filter(function(d){return d.moniteur_id!==id;});
-  if(selMoniteur&&selMoniteur.id===id)selMoniteur=null;
+  localStorage.removeItem('sl_mpin_'+id);
+  if(moniteurConnecte&&moniteurConnecte.id===id)deconnecterMoniteur();
   setSyncStatus(true,'Snowlink synchronise');
-  renderListeMoniteurs();renderChips();renderMesDispos();toast('Moniteur supprime');
+  renderListeMoniteurs();renderChips();toast('Moniteur supprime');
 }
 
 function saveAppUrl(){
@@ -639,7 +746,7 @@ function showTab(name){
   var tabs=['saisie','recherche','equipe','whatsapp','admin'];
   document.querySelectorAll('.tab')[tabs.indexOf(name)].classList.add('active');
   if(name==='equipe'){setSyncStatus(null,'Actualisation...');loadAll().then(function(){renderEquipe();});}
-  if(name==='saisie'){renderChips();renderMesDispos();}
+  if(name==='saisie'){renderChips();}
   if(name==='admin'){
     if(adminUnlocked){showAdminPanel();return;}
     var hasPIN=getPINHash();
@@ -656,6 +763,8 @@ document.getElementById('s-fin').value=t;
 document.getElementById('r-debut').value=t;
 document.getElementById('r-fin').value=t;
 document.getElementById('wa-date').value=tomorrow();
+var savedUrl=localStorage.getItem('sl_appurl');
+if(savedUrl)document.getElementById('app-url').value=savedUrl;
 loadAll();
 </script>
 </body>
