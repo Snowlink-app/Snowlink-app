@@ -163,7 +163,7 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
       <button class="btn btn-green" onclick="sauvegarder()"><i class="ti ti-check"></i> Enregistrer</button>
     </div>
     <div id="mes-dispos-wrap" style="display:none">
-      <div style="font-size:14px;font-weight:600;margin-bottom:10px;">Mes disponibilites</div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:10px;">Mes disponibilites a venir</div>
       <div id="mes-dispos-list"></div>
     </div>
   </div>
@@ -276,6 +276,7 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
 </div>
 </div>
 <div class="toast" id="toast"></div>
+
 <script>
 var SURL='https://dblvhotxhoyvruunxyef.supabase.co';
 var SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRibHZob3R4aG95dnJ1dW54eWVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NjMwMTIsImV4cCI6MjA5NjMzOTAxMn0.54kt4V0kN4N-8Bb6L2uyrTTnmMTUlhYxiznqEXMnkEo';
@@ -283,16 +284,21 @@ var APP_URL='https://snowlink-app.github.io/snowlink-app';
 var PALETTE=[{bg:'#EEEDFE',border:'#AFA9EC',text:'#3C3489',dot:'#534AB7'},{bg:'#E1F5EE',border:'#5DCAA5',text:'#085041',dot:'#0F6E56'},{bg:'#FAEEDA',border:'#FAC775',text:'#633806',dot:'#BA7517'},{bg:'#E6F1FB',border:'#85B7EB',text:'#0C447C',dot:'#185FA5'},{bg:'#FBEAF0',border:'#ED93B1',text:'#72243E',dot:'#993556'},{bg:'#EAF3DE',border:'#97C459',text:'#27500A',dot:'#3B6D11'},{bg:'#FCEBEB',border:'#F09595',text:'#791F1F',dot:'#A32D2D'},{bg:'#F1EFE8',border:'#B4B2A9',text:'#444441',dot:'#5F5E5A'}];
 var CRENEAUX={journee:{nom:'Journee',h:'9h30-16h30',cls:'b-journee'},matin:{nom:'Matin',h:'9h30-12h00',cls:'b-matin'},midi:{nom:'Mi-journee',h:'12h00-14h00',cls:'b-midi'},gmatin:{nom:'Grand matin',h:'9h30-13h30',cls:'b-gmatin'},aprem:{nom:'Apres-midi',h:'14h30-16h30',cls:'b-aprem'},gaprem:{nom:'Grand ap-m.',h:'14h00-17h00',cls:'b-gaprem'}};
 
+// Logique des creneaux
+// journee couvre tout
+// gmatin couvre matin et gmatin
+// gaprem couvre aprem et gaprem
 function couvre(crs,r){
   if(r==='tous')return true;
   crs=Array.isArray(crs)?crs:[];
   if(crs.indexOf('journee')>=0)return true;
-  if(r==='matin'&&crs.indexOf('gmatin')>=0)return true;
-  if(r==='gmatin'&&crs.indexOf('gmatin')>=0)return true;
-  if(r==='aprem'&&crs.indexOf('gaprem')>=0)return true;
-  if(r==='gaprem'&&crs.indexOf('gaprem')>=0)return true;
+  if(r==='matin'&&(crs.indexOf('gmatin')>=0))return true;
+  if(r==='gmatin'&&(crs.indexOf('gmatin')>=0))return true;
+  if(r==='aprem'&&(crs.indexOf('gaprem')>=0))return true;
+  if(r==='gaprem'&&(crs.indexOf('gaprem')>=0))return true;
   return crs.indexOf(r)>=0;
 }
+
 function getColor(id){var i=cache.moniteurs.findIndex(function(m){return m.id===id;});return PALETTE[i>=0?i%PALETTE.length:0];}
 function ini(p,n){return((p||'?')[0]+(n||'?')[0]).toUpperCase();}
 function fd(s){if(!s)return'';var d=new Date(s+'T00:00:00');return d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});}
@@ -325,12 +331,8 @@ function supprimerDisposPassees(){
   hier.setDate(hier.getDate()-1);
   var hierStr=hier.toISOString().split('T')[0];
   var aSupprimer=cache.dispos.filter(function(d){return d.fin<hierStr;});
-  aSupprimer.forEach(function(d){
-    sbFetch('dispos?id=eq.'+d.id,{method:'DELETE'}).catch(function(){});
-  });
-  if(aSupprimer.length>0){
-    cache.dispos=cache.dispos.filter(function(d){return d.fin>=hierStr;});
-  }
+  aSupprimer.forEach(function(d){sbFetch('dispos?id=eq.'+d.id,{method:'DELETE'}).catch(function(){});});
+  if(aSupprimer.length>0)cache.dispos=cache.dispos.filter(function(d){return d.fin>=hierStr;});
 }
 
 function loadAll(){
@@ -340,10 +342,7 @@ function loadAll(){
     sbFetch('dispos?select=*&order=created_at.asc')
   ]).then(function(results){
     cache.moniteurs=results[0]||[];
-    cache.dispos=(results[1]||[]).map(function(r){
-      r.creneaux=JSON.parse(r.creneaux||'[]');
-      return r;
-    });
+    cache.dispos=(results[1]||[]).map(function(r){r.creneaux=JSON.parse(r.creneaux||'[]');return r;});
     supprimerDisposPassees();
     setSyncStatus(true,'Snowlink synchronise');
     renderChips();renderListeMoniteurs();renderMesDispos();
@@ -396,12 +395,21 @@ function monPinNext(i){
 function verifierPinMoniteur(){
   if(!selMoniteur)return;
   var pin='';for(var i=0;i<4;i++)pin+=document.getElementById('mp'+i).value;
-  var storedHash=localStorage.getItem('sl_mpin_'+selMoniteur.id)||(selMoniteur.pin||null);
+  var pinHash=hashPIN(pin);
+  // Verifier d'abord dans Supabase (pin stocke), puis localStorage (fallback)
+  var storedHash=selMoniteur.pin||localStorage.getItem('sl_mpin_'+selMoniteur.id);
   if(!storedHash){
-    sbFetch('moniteurs?id=eq.'+selMoniteur.id,{method:'PATCH',body:JSON.stringify({pin:hashPIN(pin)})}).catch(function(){});localStorage.setItem('sl_mpin_'+selMoniteur.id,hashPIN(pin));
+    // Premier acces : sauvegarder dans Supabase ET localStorage
+    sbFetch('moniteurs?id=eq.'+selMoniteur.id,{method:'PATCH',body:JSON.stringify({pin:pinHash})}).then(function(){
+      selMoniteur.pin=pinHash;
+      // Mettre a jour dans le cache
+      var m=cache.moniteurs.find(function(x){return x.id===selMoniteur.id;});
+      if(m)m.pin=pinHash;
+    }).catch(function(){});
+    localStorage.setItem('sl_mpin_'+selMoniteur.id,pinHash);
     ouvrirFormulaireMoniteur();
     toast('PIN enregistre pour '+selMoniteur.prenom+' !');
-  } else if(hashPIN(pin)===storedHash){
+  } else if(pinHash===storedHash){
     ouvrirFormulaireMoniteur();
   } else {
     document.getElementById('mon-pin-error').textContent='Code incorrect.';
@@ -433,6 +441,7 @@ function sauvegarder(){
   if(!moniteurConnecte){toast('Connectez-vous dabord');return;}
   var d1=document.getElementById('s-debut').value,d2=document.getElementById('s-fin').value;
   if(!d1||!d2){toast('Choisissez les dates');return;}
+  if(d1<today()){toast('La date de debut ne peut pas etre dans le passe');return;}
   if(!selCreneaux.length){toast('Choisissez un creneau');return;}
   var note=document.getElementById('s-note').value.trim();
   var newId=Date.now().toString();
@@ -451,8 +460,8 @@ function sauvegarder(){
 
 function renderMesDispos(){
   if(!moniteurConnecte){document.getElementById('mes-dispos-wrap').style.display='none';return;}
-  var aujourdhui=today();
-  var data=cache.dispos.filter(function(d){return d.moniteur_id===moniteurConnecte.id&&d.fin>=aujourdhui;});
+  var auj=today();
+  var data=cache.dispos.filter(function(d){return d.moniteur_id===moniteurConnecte.id&&d.fin>=auj;});
   var wrap=document.getElementById('mes-dispos-wrap');
   if(!data.length){wrap.style.display='none';return;}
   var col=getColor(moniteurConnecte.id);
@@ -474,11 +483,7 @@ function suppDispo(id){
   renderMesDispos();
 }
 
-function getTel(mid){
-  var m=cache.moniteurs.find(function(x){return x.id===mid;});
-  return m?m.tel||'':'';
-}
-
+function getTel(mid){var m=cache.moniteurs.find(function(x){return x.id===mid;});return m?m.tel||'':'';}
 function contacterWA(tel){tel=(tel||'').replace(/\s/g,'');if(tel)window.open('https://wa.me/'+tel.replace('+',''));else toast('Pas de numero pour ce moniteur');}
 function contacterSMS(tel){tel=(tel||'').replace(/\s/g,'');if(tel)window.open('sms:'+tel);else toast('Pas de numero pour ce moniteur');}
 
@@ -491,41 +496,41 @@ function contactBtns(mid){
     +'</div>';
 }
 
+function moniteurCard(m,dispos){
+  var col=getColor(m.mid);
+  return '<div class="moniteur-card" style="background:'+col.bg+';border-color:'+col.border+';">'
+    +'<div class="avatar" style="width:36px;height:36px;font-size:12px;background:'+col.dot+';">'+ini(m.prenom,m.nom)+'</div>'
+    +'<div style="flex:1;">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">'
+    +'<div class="tag-nom" style="color:'+col.text+'">'+m.prenom+' '+m.nom+'</div>'
+    +contactBtns(m.mid)
+    +'</div>'
+    +dispos.map(function(d){
+      var crs=Array.isArray(d.creneaux)?d.creneaux:[];
+      return '<div class="tag-d" style="color:'+col.text+'">'+fd(d.debut)+(d.debut!==d.fin?' - '+fd(d.fin):'')+' '+crs.map(badgeCr).join(' ')+(d.note?' - '+d.note:'')+'</div>';
+    }).join('')
+    +'</div></div>';
+}
+
 function rechercher(){
   var d1=document.getElementById('r-debut').value,d2=document.getElementById('r-fin').value;
   var res=document.getElementById('resultats');
   if(!d1||!d2){toast('Choisissez les dates');return;}
+  var auj=today();
   var data=cache.dispos.filter(function(d){
+    if(d.fin<auj)return false;
     if(d.debut>d2||d.fin<d1)return false;
     return couvre(d.creneaux,rechCr);
   });
   if(!data.length){res.innerHTML='<div class="empty">Aucun moniteur disponible.</div>';return;}
   var byId={};
-  data.forEach(function(d){
-    var k=d.moniteur_id;
-    if(!byId[k])byId[k]={prenom:d.prenom,nom:d.nom,mid:d.moniteur_id,dispos:[]};
-    byId[k].dispos.push(d);
-  });
-  res.innerHTML=Object.values(byId).map(function(m){
-    var col=getColor(m.mid);
-    return '<div class="moniteur-card" style="background:'+col.bg+';border-color:'+col.border+';">'
-      +'<div class="avatar" style="width:36px;height:36px;font-size:12px;background:'+col.dot+';">'+ini(m.prenom,m.nom)+'</div>'
-      +'<div style="flex:1;">'
-      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">'
-      +'<div class="tag-nom" style="color:'+col.text+'">'+m.prenom+' '+m.nom+'</div>'
-      +contactBtns(m.mid)
-      +'</div>'
-      +m.dispos.map(function(d){
-        var crs=Array.isArray(d.creneaux)?d.creneaux:[];
-        return '<div class="tag-d" style="color:'+col.text+'">'+fd(d.debut)+(d.debut!==d.fin?' - '+fd(d.fin):'')+' '+crs.map(badgeCr).join(' ')+(d.note?' - '+d.note:'')+'</div>';
-      }).join('')
-      +'</div></div>';
-  }).join('');
+  data.forEach(function(d){var k=d.moniteur_id;if(!byId[k])byId[k]={prenom:d.prenom,nom:d.nom,mid:d.moniteur_id,dispos:[]};byId[k].dispos.push(d);});
+  res.innerHTML=Object.values(byId).map(function(m){return moniteurCard(m,m.dispos);}).join('');
 }
 
 function renderEquipe(){
-  var aujourdhui=today();
-  var disposFutures=cache.dispos.filter(function(d){return d.fin>=aujourdhui;});
+  var auj=today();
+  var disposFutures=cache.dispos.filter(function(d){return d.fin>=auj;});
   var ids=[];
   disposFutures.forEach(function(d){if(ids.indexOf(d.moniteur_id)<0)ids.push(d.moniteur_id);});
   var leg=document.getElementById('legende-equipe');
@@ -539,26 +544,8 @@ function renderEquipe(){
   var el=document.getElementById('vue-equipe');
   if(!disposFutures.length){el.innerHTML='<div class="empty">Aucune disponibilite a venir.</div>';return;}
   var byId={};
-  disposFutures.forEach(function(d){
-    var k=d.moniteur_id;
-    if(!byId[k])byId[k]={prenom:d.prenom,nom:d.nom,mid:d.moniteur_id,dispos:[]};
-    byId[k].dispos.push(d);
-  });
-  el.innerHTML=Object.values(byId).map(function(m){
-    var col=getColor(m.mid);
-    return '<div class="moniteur-card" style="background:'+col.bg+';border-color:'+col.border+';">'
-      +'<div class="avatar" style="width:36px;height:36px;font-size:12px;background:'+col.dot+';margin-top:2px">'+ini(m.prenom,m.nom)+'</div>'
-      +'<div style="flex:1;">'
-      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">'
-      +'<div class="tag-nom" style="color:'+col.text+'">'+m.prenom+' '+m.nom+'</div>'
-      +contactBtns(m.mid)
-      +'</div>'
-      +m.dispos.map(function(d){
-        var crs=Array.isArray(d.creneaux)?d.creneaux:[];
-        return '<div class="tag-d" style="color:'+col.text+'">'+fd(d.debut)+(d.debut!==d.fin?' - '+fd(d.fin):'')+' '+crs.map(badgeCr).join(' ')+(d.note?' - '+d.note:'')+'</div>';
-      }).join('')
-      +'</div></div>';
-  }).join('');
+  disposFutures.forEach(function(d){var k=d.moniteur_id;if(!byId[k])byId[k]={prenom:d.prenom,nom:d.nom,mid:d.moniteur_id,dispos:[]};byId[k].dispos.push(d);});
+  el.innerHTML=Object.values(byId).map(function(m){return moniteurCard(m,m.dispos);}).join('');
 }
 
 function buildInviteMsg(m){
