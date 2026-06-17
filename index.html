@@ -398,7 +398,7 @@ function verifierPinMoniteur(){
   var pin='';for(var i=0;i<4;i++)pin+=document.getElementById('mp'+i).value;
   var storedHash=localStorage.getItem('sl_mpin_'+selMoniteur.id)||(selMoniteur.pin||null);
   if(!storedHash){
-    sbFetch('moniteurs?id=eq.'+selMoniteur.id,{method:'PATCH',body:JSON.stringify({pin:hashPIN(pin)})}).catch(function(){});sbFetch('moniteurs?id=eq.'+selMoniteur.id,{method:'PATCH',body:JSON.stringify({pin:hashPIN(pin)})}).catch(function(){});localStorage.setItem('sl_mpin_'+selMoniteur.id,hashPIN(pin));
+    sbFetch('moniteurs?id=eq.'+selMoniteur.id,{method:'PATCH',body:JSON.stringify({pin:hashPIN(pin)})}).catch(function(){});localStorage.setItem('sl_mpin_'+selMoniteur.id,hashPIN(pin));
     ouvrirFormulaireMoniteur();
     toast('PIN enregistre pour '+selMoniteur.prenom+' !');
   } else if(hashPIN(pin)===storedHash){
