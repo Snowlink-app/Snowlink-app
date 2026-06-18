@@ -562,10 +562,10 @@ function renderEquipe(){
 function renderAujourdhui(){
   var auj=today();
   var dateStr=new Date(auj+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
-  document.getElementById('titre-aujourdhui').textContent='Aujourd'hui - '+dateStr;
+  document.getElementById('titre-aujourdhui').textContent='Aujourd\'hui - '+dateStr;
   var data=cache.dispos.filter(function(d){return d.debut<=auj&&d.fin>=auj;});
   var el=document.getElementById('dispos-aujourdhui');
-  if(!data.length){el.innerHTML='<div class="empty">Aucune disponibilite aujourd'hui.</div>';return;}
+  if(!data.length){el.innerHTML='<div class="empty">Aucune disponibilite ce jour.</div>';return;}
   var byId={};
   data.forEach(function(d){var k=d.moniteur_id;if(!byId[k])byId[k]={prenom:d.prenom,nom:d.nom,mid:d.moniteur_id,dispos:[]};byId[k].dispos.push(d);});
   el.innerHTML=Object.values(byId).map(function(m){return moniteurCard(m,m.dispos);}).join('');
@@ -582,7 +582,7 @@ function envoyerWAgroupe(){
     },500);
   } else {
     window.open('https://wa.me/?text='+encodeURIComponent(waMsg));
-    toast('Configurez le lien groupe dans Admin pour aller plus vite !');
+    toast('Configurez le lien groupe dans Admin !');
   }
 }
 
