@@ -110,7 +110,7 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
   <div class="tab active" onclick="showTab('saisie')"><i class="ti ti-calendar-plus"></i>Mes dispo</div>
   <div class="tab" onclick="showTab('recherche')"><i class="ti ti-search"></i>Chercher</div>
   <div class="tab" onclick="showTab('equipe')"><i class="ti ti-users"></i>Equipe</div>
-  <div class="tab" onclick="showTab('whatsapp')"><i class="ti ti-brand-whatsapp"></i>WhatsApp</div>
+  <div class="tab" onclick="showTab('aujourdhui')"><i class="ti ti-sun"></i>Aujourd'hui</div>
   <div class="tab" onclick="showTab('admin')"><i class="ti ti-lock"></i>Admin</div>
 </div>
 
@@ -198,18 +198,22 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
   <div id="vue-equipe"><div class="empty">Chargement...</div></div>
 </div>
 
-<div id="tab-whatsapp" class="section">
-  <div class="section-title">Partager sur WhatsApp</div>
-  <div class="card">
-    <label>Date concernee</label>
-    <input type="date" id="wa-date"/>
-    <label>Numero du destinataire (optionnel)</label>
-    <input type="tel" id="wa-numero" placeholder="+33612345678"/>
-    <div class="wa-preview" id="wa-preview">Le resume apparaitra ici...</div>
+<div id="tab-aujourdhui" class="section">
+  <div class="section-title" id="titre-aujourdhui">Aujourd'hui</div>
+  <div id="dispos-aujourdhui"><div class="empty">Chargement...</div></div>
+  <div class="card" style="margin-top:12px;">
+    <div style="font-size:13px;font-weight:600;margin-bottom:10px;">Partager les dispos du jour</div>
+    <div class="wa-preview" id="wa-preview">Appuyez sur Generer pour voir le resume...</div>
     <div class="btn-row">
       <button class="btn btn-ghost" onclick="genWA()"><i class="ti ti-refresh"></i> Generer</button>
-      <button class="btn btn-wa" onclick="envoyerWA()"><i class="ti ti-brand-whatsapp"></i> WhatsApp</button>
+      <button class="btn btn-wa" onclick="envoyerWAgroupe()"><i class="ti ti-brand-whatsapp"></i> Groupe</button>
+      <button class="btn btn-sms" onclick="envoyerWApersonne()"><i class="ti ti-user"></i> Une personne</button>
       <button class="btn btn-ghost" onclick="copierWA()"><i class="ti ti-copy"></i> Copier</button>
+    </div>
+    <div id="wa-personne-box" style="display:none;margin-top:10px;">
+      <label>Numero WhatsApp</label>
+      <input type="tel" id="wa-numero" placeholder="+33612345678"/>
+      <button class="btn btn-wa" onclick="envoyerWA()" style="margin-top:8px;"><i class="ti ti-send"></i> Envoyer</button>
     </div>
   </div>
 </div>
@@ -263,9 +267,11 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
     <div style="font-size:14px;font-weight:600;margin-bottom:10px;">Moniteurs inscrits</div>
     <div class="card" id="liste-moniteurs" style="padding:8px 14px;"></div>
     <div class="card" style="margin-top:8px;">
-      <div style="font-size:13px;font-weight:600;margin-bottom:8px;">Lien de l'application</div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:8px;">Liens de l'application</div>
       <label>URL Snowlink</label>
       <input type="url" id="app-url" value="https://snowlink-app.github.io/snowlink-app"/>
+      <label>Lien groupe WhatsApp</label>
+      <input type="url" id="wa-groupe-url" placeholder="https://chat.whatsapp.com/..."/>
       <br/>
       <button class="btn btn-ghost" onclick="saveAppUrl()"><i class="ti ti-check"></i> Enregistrer</button>
     </div>
@@ -526,6 +532,11 @@ function rechercher(){
   var byId={};
   data.forEach(function(d){var k=d.moniteur_id;if(!byId[k])byId[k]={prenom:d.prenom,nom:d.nom,mid:d.moniteur_id,dispos:[]};byId[k].dispos.push(d);});
   res.innerHTML=Object.values(byId).map(function(m){return moniteurCard(m,m.dispos);}).join('');
+  // Bouton partager les resultats
+  var nbResultats=Object.keys(byId).length;
+  res.innerHTML+='<div style="margin-top:12px;">'
+    +'<button class="btn btn-wa" onclick="partagerRecherche()" style="width:100%;justify-content:center;">'
+    +'<i class="ti ti-brand-whatsapp"></i> Partager ces '+nbResultats+' resultat(s)</button></div>';
 }
 
 function renderEquipe(){
@@ -548,15 +559,97 @@ function renderEquipe(){
   el.innerHTML=Object.values(byId).map(function(m){return moniteurCard(m,m.dispos);}).join('');
 }
 
+function renderAujourdhui(){
+  var auj=today();
+  var dateStr=new Date(auj+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('titre-aujourdhui').textContent='Aujourd'hui - '+dateStr;
+  var data=cache.dispos.filter(function(d){return d.debut<=auj&&d.fin>=auj;});
+  var el=document.getElementById('dispos-aujourdhui');
+  if(!data.length){el.innerHTML='<div class="empty">Aucune disponibilite aujourd'hui.</div>';return;}
+  var byId={};
+  data.forEach(function(d){var k=d.moniteur_id;if(!byId[k])byId[k]={prenom:d.prenom,nom:d.nom,mid:d.moniteur_id,dispos:[]};byId[k].dispos.push(d);});
+  el.innerHTML=Object.values(byId).map(function(m){return moniteurCard(m,m.dispos);}).join('');
+}
+
+function envoyerWAgroupe(){
+  if(!waMsg)genWA();
+  var groupeUrl=localStorage.getItem('sl_wagroupe')||'';
+  if(groupeUrl){
+    // Ouvrir directement le lien groupe avec le message
+    window.open(groupeUrl);
+    setTimeout(function(){
+      navigator.clipboard.writeText(waMsg).then(function(){toast('Message copie - collez-le dans le groupe !');}).catch(function(){});
+    },500);
+  } else {
+    window.open('https://wa.me/?text='+encodeURIComponent(waMsg));
+    toast('Configurez le lien groupe dans Admin pour aller plus vite !');
+  }
+}
+
+function envoyerWApersonne(){
+  var box=document.getElementById('wa-personne-box');
+  box.style.display=box.style.display==='none'?'block':'none';
+}
+
+function envoyerWA(){
+  if(!waMsg)genWA();
+  var num=document.getElementById('wa-numero').value.replace(/\s/g,'');
+  if(!num){toast('Entrez un numero');return;}
+  window.open('https://wa.me/'+num.replace('+','')+'?text='+encodeURIComponent(waMsg));
+}
+
+function partagerRecherche(){
+  var d1=document.getElementById('r-debut').value;
+  var d2=document.getElementById('r-fin').value;
+  var auj=today();
+  var data=cache.dispos.filter(function(d){
+    if(d.fin<auj)return false;
+    if(d.debut>d2||d.fin<d1)return false;
+    return couvre(d.creneaux,rechCr);
+  });
+  var crNom=rechCr==='tous'?'tous creneaux':CRENEAUX[rechCr]?CRENEAUX[rechCr].nom:rechCr;
+  var msg='Snowlink - Disponibilites
+';
+  msg+=new Date(d1+'T00:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
+  if(d1!==d2)msg+=' au '+new Date(d2+'T00:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
+  msg+=' - '+crNom+'
+
+';
+  if(!data.length){msg+='Aucun moniteur disponible.';}
+  else{
+    var byId={};
+    data.forEach(function(d){var k=d.moniteur_id;if(!byId[k])byId[k]={prenom:d.prenom,nom:d.nom,creneaux:[],notes:[]};var crs=Array.isArray(d.creneaux)?d.creneaux:[];crs.forEach(function(c){if(byId[k].creneaux.indexOf(c)<0)byId[k].creneaux.push(c);});if(d.note)byId[k].notes.push(d.note);});
+    Object.values(byId).forEach(function(m){msg+=m.prenom+' '+m.nom+'
+';m.creneaux.forEach(function(c){var cr=CRENEAUX[c];if(cr)msg+='  - '+cr.nom+' ('+cr.h+')
+';});if(m.notes.length)msg+='  '+m.notes.join(', ')+'
+';msg+='
+';});
+  }
+  msg+='Envoye via Snowlink';
+  window.open('https://wa.me/?text='+encodeURIComponent(msg));
+}
+
 function buildInviteMsg(m){
   var url=localStorage.getItem('sl_appurl')||APP_URL;
   return 'Bonjour '+m.prenom+' !\n\nTu es invite(e) a rejoindre Snowlink, l\'app de disponibilites de notre equipe !\n\nAccede a l\'app ici :\n'+url+'\n\nRejoins-nous vite !';
 }
-function inviterWA(id){var m=cache.moniteurs.find(function(x){return x.id===id;});if(!m)return;var msg=buildInviteMsg(m);var num=(m.tel||'').replace(/\s/g,'');window.open(num?'https://wa.me/'+num.replace('+','')+'?text='+encodeURIComponent(msg):'https://wa.me/?text='+encodeURIComponent(msg));}
+function inviterWA(id){
+  var m=cache.moniteurs.find(function(x){return x.id===id;});if(!m)return;
+  var msg=buildInviteMsg(m);
+  var num=(m.tel||'').replace(/\s/g,'');
+  var url=num?'https://wa.me/'+num.replace('+','')+'?text='+encodeURIComponent(msg):'https://wa.me/?text='+encodeURIComponent(msg);
+  window.open(url);
+  // 2eme message apres 3 secondes
+  setTimeout(function(){
+    var groupeLien=localStorage.getItem('sl_wagroupe')||'https://chat.whatsapp.com/DTurwe7f15B6EQa0vwvLZe';var msg2='Rejoins aussi notre groupe WhatsApp Snowlink :\n'+groupeLien;
+    var url2=num?'https://wa.me/'+num.replace('+','')+'?text='+encodeURIComponent(msg2):'https://wa.me/?text='+encodeURIComponent(msg2);
+    window.open(url2);
+  },3000);
+}
 function inviterSMS(id){var m=cache.moniteurs.find(function(x){return x.id===id;});if(!m)return;var msg=buildInviteMsg(m);var num=(m.tel||'').replace(/\s/g,'');window.open('sms:'+num+'?body='+encodeURIComponent(msg));}
 
 function genWA(){
-  var date=document.getElementById('wa-date').value||tomorrow();
+  var date=today();
   var data=cache.dispos.filter(function(d){return d.debut<=date&&d.fin>=date;});
   var msg='Snowlink - Dispos\n'+new Date(date+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})+'\n\n';
   if(!data.length){msg+='Aucune disponibilite pour ce jour.';}
@@ -570,7 +663,7 @@ function genWA(){
   var prev=document.getElementById('wa-preview');
   prev.style.color='#1a1a1a';prev.textContent=msg;
 }
-function envoyerWA(){if(!waMsg)genWA();var num=document.getElementById('wa-numero').value.replace(/\s/g,'');window.open(num?'https://wa.me/'+num.replace('+','')+'?text='+encodeURIComponent(waMsg):'https://wa.me/?text='+encodeURIComponent(waMsg));}
+// envoyerWA defini plus haut
 function copierWA(){if(!waMsg)genWA();navigator.clipboard.writeText(waMsg).then(function(){toast('Copie !');}).catch(function(){toast('Copie impossible');});}
 
 function ajouterMoniteur(){
@@ -605,7 +698,13 @@ function suppMoniteur(id){
   renderListeMoniteurs();renderChips();toast('Moniteur supprime');
 }
 
-function saveAppUrl(){var url=document.getElementById('app-url').value.trim();localStorage.setItem('sl_appurl',url);toast('Lien enregistre !');}
+function saveAppUrl(){
+  var url=document.getElementById('app-url').value.trim();
+  localStorage.setItem('sl_appurl',url);
+  var waUrl=document.getElementById('wa-groupe-url').value.trim();
+  if(waUrl)localStorage.setItem('sl_wagroupe',waUrl);
+  toast('Liens enregistres !');
+}
 
 function renderListeMoniteurs(){
   var el=document.getElementById('liste-moniteurs');
@@ -627,9 +726,9 @@ function showTab(name){
   document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
   document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
   document.getElementById('tab-'+name).classList.add('active');
-  var tabs=['saisie','recherche','equipe','whatsapp','admin'];
+  var tabs=['saisie','recherche','equipe','aujourdhui','admin'];
   document.querySelectorAll('.tab')[tabs.indexOf(name)].classList.add('active');
-  if(name==='equipe'){setSyncStatus(null,'Actualisation...');loadAll().then(function(){renderEquipe();});}
+  if(name==='equipe'){setSyncStatus(null,'Actualisation...');loadAll().then(function(){renderEquipe();});}if(name==='aujourdhui'){setSyncStatus(null,'Actualisation...');loadAll().then(function(){renderAujourdhui();genWA();});}
   if(name==='saisie'){renderChips();}
   if(name==='admin'){
     if(adminUnlocked){showAdminPanel();return;}
@@ -649,6 +748,8 @@ document.getElementById('r-fin').value=t;
 document.getElementById('wa-date').value=tomorrow();
 var savedUrl=localStorage.getItem('sl_appurl');
 if(savedUrl)document.getElementById('app-url').value=savedUrl;
+var savedWaGroupe=localStorage.getItem('sl_wagroupe');
+if(savedWaGroupe)document.getElementById('wa-groupe-url').value=savedWaGroupe;
 loadAll();
 </script>
 </body>
