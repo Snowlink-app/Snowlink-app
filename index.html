@@ -607,23 +607,16 @@ function partagerRecherche(){
     if(d.debut>d2||d.fin<d1)return false;
     return couvre(d.creneaux,rechCr);
   });
-  var crNom=rechCr==='tous'?'tous creneaux':CRENEAUX[rechCr]?CRENEAUX[rechCr].nom:rechCr;
-  var msg='Snowlink - Disponibilites
-';
+  var crNom=rechCr==='tous'?'tous creneaux':(CRENEAUX[rechCr]?CRENEAUX[rechCr].nom:rechCr);
+  var msg='Snowlink - Disponibilites\n';
   msg+=new Date(d1+'T00:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
   if(d1!==d2)msg+=' au '+new Date(d2+'T00:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
-  msg+=' - '+crNom+'
-
-';
+  msg+=' - '+crNom+'\n\n';
   if(!data.length){msg+='Aucun moniteur disponible.';}
   else{
     var byId={};
     data.forEach(function(d){var k=d.moniteur_id;if(!byId[k])byId[k]={prenom:d.prenom,nom:d.nom,creneaux:[],notes:[]};var crs=Array.isArray(d.creneaux)?d.creneaux:[];crs.forEach(function(c){if(byId[k].creneaux.indexOf(c)<0)byId[k].creneaux.push(c);});if(d.note)byId[k].notes.push(d.note);});
-    Object.values(byId).forEach(function(m){msg+=m.prenom+' '+m.nom+'
-';m.creneaux.forEach(function(c){var cr=CRENEAUX[c];if(cr)msg+='  - '+cr.nom+' ('+cr.h+')
-';});if(m.notes.length)msg+='  '+m.notes.join(', ')+'
-';msg+='
-';});
+    Object.values(byId).forEach(function(m){msg+=m.prenom+' '+m.nom+'\n';m.creneaux.forEach(function(c){var cr=CRENEAUX[c];if(cr)msg+='  - '+cr.nom+' ('+cr.h+')\n';});if(m.notes.length)msg+='  '+m.notes.join(', ')+'\n';msg+='\n';});
   }
   msg+='Envoye via Snowlink';
   window.open('https://wa.me/?text='+encodeURIComponent(msg));
