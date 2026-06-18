@@ -562,7 +562,7 @@ function renderEquipe(){
 function renderAujourdhui(){
   var auj=today();
   var dateStr=new Date(auj+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
-  document.getElementById('titre-aujourdhui').textContent='Aujourd\'hui - '+dateStr;
+  document.getElementById('titre-aujourdhui').textContent='Dispos du jour - '+dateStr;
   var data=cache.dispos.filter(function(d){return d.debut<=auj&&d.fin>=auj;});
   var el=document.getElementById('dispos-aujourdhui');
   if(!data.length){el.innerHTML='<div class="empty">Aucune disponibilite ce jour.</div>';return;}
