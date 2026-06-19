@@ -108,9 +108,9 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
 </div>
 <div class="tabs">
   <div class="tab active" onclick="showTab('saisie')"><i class="ti ti-calendar-plus"></i>Mes dispo</div>
+  <div class="tab" onclick="showTab('aujourdhui')"><i class="ti ti-sun"></i>Auj.</div>
   <div class="tab" onclick="showTab('recherche')"><i class="ti ti-search"></i>Chercher</div>
   <div class="tab" onclick="showTab('equipe')"><i class="ti ti-users"></i>Equipe</div>
-  <div class="tab" onclick="showTab('aujourdhui')"><i class="ti ti-sun"></i>Aujourd'hui</div>
   <div class="tab" onclick="showTab('admin')"><i class="ti ti-lock"></i>Admin</div>
 </div>
 
@@ -150,12 +150,12 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
       </div>
       <label>Creneau(x)</label>
       <div class="creneaux-grid" id="cr-grid">
-        <button class="cr-btn" data-v="journee" onclick="toggleCr(this)"><span class="cr-nom">Journee</span><span class="cr-h">9h30 - 16h30</span></button>
-        <button class="cr-btn" data-v="matin" onclick="toggleCr(this)"><span class="cr-nom">Matin</span><span class="cr-h">9h30 - 12h00</span></button>
-        <button class="cr-btn" data-v="midi" onclick="toggleCr(this)"><span class="cr-nom">Mi-journee</span><span class="cr-h">12h00 - 14h00</span></button>
-        <button class="cr-btn" data-v="gmatin" onclick="toggleCr(this)"><span class="cr-nom">Grand matin</span><span class="cr-h">9h30 - 13h30</span></button>
-        <button class="cr-btn" data-v="aprem" onclick="toggleCr(this)"><span class="cr-nom">Apres-midi</span><span class="cr-h">14h30 - 16h30</span></button>
-        <button class="cr-btn" data-v="gaprem" onclick="toggleCr(this)"><span class="cr-nom">Grand apres-midi</span><span class="cr-h">14h00 - 17h00</span></button>
+        <button class="cr-btn" data-v="journee" onclick="toggleCr(this)"><span class="cr-nom">Journee</span><span class="cr-h">9h30-16h30</span></button>
+        <button class="cr-btn" data-v="matin" onclick="toggleCr(this)"><span class="cr-nom">Matin</span><span class="cr-h">9h30-12h00</span></button>
+        <button class="cr-btn" data-v="midi" onclick="toggleCr(this)"><span class="cr-nom">Mi-journee</span><span class="cr-h">12h00-14h00</span></button>
+        <button class="cr-btn" data-v="gmatin" onclick="toggleCr(this)"><span class="cr-nom">Grand matin</span><span class="cr-h">9h30-13h30</span></button>
+        <button class="cr-btn" data-v="aprem" onclick="toggleCr(this)"><span class="cr-nom">Apres-midi</span><span class="cr-h">14h30-16h30</span></button>
+        <button class="cr-btn" data-v="gaprem" onclick="toggleCr(this)"><span class="cr-nom">Grand apres-midi</span><span class="cr-h">14h00-17h00</span></button>
       </div>
       <label>Note (optionnel)</label>
       <input type="text" id="s-note" placeholder="Ex : sauf mauvaise meteo..."/>
@@ -165,6 +165,26 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
     <div id="mes-dispos-wrap" style="display:none">
       <div style="font-size:14px;font-weight:600;margin-bottom:10px;">Mes disponibilites a venir</div>
       <div id="mes-dispos-list"></div>
+    </div>
+  </div>
+</div>
+
+<div id="tab-aujourdhui" class="section">
+  <div class="section-title" id="titre-aujourdhui">Dispos du jour</div>
+  <div id="dispos-aujourdhui"><div class="empty">Chargement...</div></div>
+  <div class="card" style="margin-top:12px;">
+    <div style="font-size:13px;font-weight:600;margin-bottom:10px;">Partager les dispos du jour</div>
+    <div class="wa-preview" id="wa-preview">Appuyez sur Generer...</div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="genWA()"><i class="ti ti-refresh"></i> Generer</button>
+      <button class="btn btn-wa" onclick="envoyerWAgroupe()"><i class="ti ti-brand-whatsapp"></i> Groupe</button>
+      <button class="btn btn-sms" onclick="afficherWAPersonne()"><i class="ti ti-user"></i> Personne</button>
+      <button class="btn btn-ghost" onclick="copierWA()"><i class="ti ti-copy"></i> Copier</button>
+    </div>
+    <div id="wa-personne-box" style="display:none;margin-top:10px;">
+      <label>Numero WhatsApp</label>
+      <input type="tel" id="wa-numero" placeholder="+33612345678"/>
+      <button class="btn btn-wa" onclick="envoyerWAPersonne()" style="margin-top:8px;"><i class="ti ti-send"></i> Envoyer</button>
     </div>
   </div>
 </div>
@@ -179,12 +199,12 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
     <label>Creneau</label>
     <div class="creneaux-grid">
       <button class="cr-btn sel" data-v="tous" onclick="selRech(this)"><span class="cr-nom">Tous</span></button>
-      <button class="cr-btn" data-v="journee" onclick="selRech(this)"><span class="cr-nom">Journee</span><span class="cr-h">9h30 - 16h30</span></button>
-      <button class="cr-btn" data-v="matin" onclick="selRech(this)"><span class="cr-nom">Matin</span><span class="cr-h">9h30 - 12h00</span></button>
-      <button class="cr-btn" data-v="midi" onclick="selRech(this)"><span class="cr-nom">Mi-journee</span><span class="cr-h">12h00 - 14h00</span></button>
-      <button class="cr-btn" data-v="gmatin" onclick="selRech(this)"><span class="cr-nom">Grand matin</span><span class="cr-h">9h30 - 13h30</span></button>
-      <button class="cr-btn" data-v="aprem" onclick="selRech(this)"><span class="cr-nom">Apres-midi</span><span class="cr-h">14h30 - 16h30</span></button>
-      <button class="cr-btn" data-v="gaprem" onclick="selRech(this)"><span class="cr-nom">Grand apres-midi</span><span class="cr-h">14h00 - 17h00</span></button>
+      <button class="cr-btn" data-v="journee" onclick="selRech(this)"><span class="cr-nom">Journee</span><span class="cr-h">9h30-16h30</span></button>
+      <button class="cr-btn" data-v="matin" onclick="selRech(this)"><span class="cr-nom">Matin</span><span class="cr-h">9h30-12h00</span></button>
+      <button class="cr-btn" data-v="midi" onclick="selRech(this)"><span class="cr-nom">Mi-journee</span><span class="cr-h">12h00-14h00</span></button>
+      <button class="cr-btn" data-v="gmatin" onclick="selRech(this)"><span class="cr-nom">Grand matin</span><span class="cr-h">9h30-13h30</span></button>
+      <button class="cr-btn" data-v="aprem" onclick="selRech(this)"><span class="cr-nom">Apres-midi</span><span class="cr-h">14h30-16h30</span></button>
+      <button class="cr-btn" data-v="gaprem" onclick="selRech(this)"><span class="cr-nom">Grand apres-midi</span><span class="cr-h">14h00-17h00</span></button>
     </div>
     <br/>
     <button class="btn btn-primary" onclick="rechercher()"><i class="ti ti-search"></i> Rechercher</button>
@@ -196,26 +216,6 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
   <div class="section-title">Disponibilites a venir</div>
   <div id="legende-equipe" class="legend-row"></div>
   <div id="vue-equipe"><div class="empty">Chargement...</div></div>
-</div>
-
-<div id="tab-aujourdhui" class="section">
-  <div class="section-title" id="titre-aujourdhui">Aujourd'hui</div>
-  <div id="dispos-aujourdhui"><div class="empty">Chargement...</div></div>
-  <div class="card" style="margin-top:12px;">
-    <div style="font-size:13px;font-weight:600;margin-bottom:10px;">Partager les dispos du jour</div>
-    <div class="wa-preview" id="wa-preview">Appuyez sur Generer pour voir le resume...</div>
-    <div class="btn-row">
-      <button class="btn btn-ghost" onclick="genWA()"><i class="ti ti-refresh"></i> Generer</button>
-      <button class="btn btn-wa" onclick="envoyerWAgroupe()"><i class="ti ti-brand-whatsapp"></i> Groupe</button>
-      <button class="btn btn-sms" onclick="envoyerWApersonne()"><i class="ti ti-user"></i> Une personne</button>
-      <button class="btn btn-ghost" onclick="copierWA()"><i class="ti ti-copy"></i> Copier</button>
-    </div>
-    <div id="wa-personne-box" style="display:none;margin-top:10px;">
-      <label>Numero WhatsApp</label>
-      <input type="tel" id="wa-numero" placeholder="+33612345678"/>
-      <button class="btn btn-wa" onclick="envoyerWA()" style="margin-top:8px;"><i class="ti ti-send"></i> Envoyer</button>
-    </div>
-  </div>
 </div>
 
 <div id="tab-admin" class="section">
@@ -267,13 +267,13 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
     <div style="font-size:14px;font-weight:600;margin-bottom:10px;">Moniteurs inscrits</div>
     <div class="card" id="liste-moniteurs" style="padding:8px 14px;"></div>
     <div class="card" style="margin-top:8px;">
-      <div style="font-size:13px;font-weight:600;margin-bottom:8px;">Liens de l'application</div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:8px;">Configuration</div>
       <label>URL Snowlink</label>
       <input type="url" id="app-url" value="https://snowlink-app.github.io/snowlink-app"/>
       <label>Lien groupe WhatsApp</label>
       <input type="url" id="wa-groupe-url" placeholder="https://chat.whatsapp.com/..."/>
       <br/>
-      <button class="btn btn-ghost" onclick="saveAppUrl()"><i class="ti ti-check"></i> Enregistrer</button>
+      <button class="btn btn-ghost" onclick="saveConfig()"><i class="ti ti-check"></i> Enregistrer</button>
     </div>
     <div style="margin-top:12px;text-align:right;">
       <button class="btn btn-ghost btn-sm" onclick="adminLogout()"><i class="ti ti-logout"></i> Se deconnecter</button>
@@ -290,18 +290,12 @@ var APP_URL='https://snowlink-app.github.io/snowlink-app';
 var PALETTE=[{bg:'#EEEDFE',border:'#AFA9EC',text:'#3C3489',dot:'#534AB7'},{bg:'#E1F5EE',border:'#5DCAA5',text:'#085041',dot:'#0F6E56'},{bg:'#FAEEDA',border:'#FAC775',text:'#633806',dot:'#BA7517'},{bg:'#E6F1FB',border:'#85B7EB',text:'#0C447C',dot:'#185FA5'},{bg:'#FBEAF0',border:'#ED93B1',text:'#72243E',dot:'#993556'},{bg:'#EAF3DE',border:'#97C459',text:'#27500A',dot:'#3B6D11'},{bg:'#FCEBEB',border:'#F09595',text:'#791F1F',dot:'#A32D2D'},{bg:'#F1EFE8',border:'#B4B2A9',text:'#444441',dot:'#5F5E5A'}];
 var CRENEAUX={journee:{nom:'Journee',h:'9h30-16h30',cls:'b-journee'},matin:{nom:'Matin',h:'9h30-12h00',cls:'b-matin'},midi:{nom:'Mi-journee',h:'12h00-14h00',cls:'b-midi'},gmatin:{nom:'Grand matin',h:'9h30-13h30',cls:'b-gmatin'},aprem:{nom:'Apres-midi',h:'14h30-16h30',cls:'b-aprem'},gaprem:{nom:'Grand ap-m.',h:'14h00-17h00',cls:'b-gaprem'}};
 
-// Logique des creneaux
-// journee couvre tout
-// gmatin couvre matin et gmatin
-// gaprem couvre aprem et gaprem
 function couvre(crs,r){
   if(r==='tous')return true;
   crs=Array.isArray(crs)?crs:[];
   if(crs.indexOf('journee')>=0)return true;
-  if(r==='matin'&&(crs.indexOf('gmatin')>=0))return true;
-  if(r==='gmatin'&&(crs.indexOf('gmatin')>=0))return true;
-  if(r==='aprem'&&(crs.indexOf('gaprem')>=0))return true;
-  if(r==='gaprem'&&(crs.indexOf('gaprem')>=0))return true;
+  if((r==='matin'||r==='gmatin')&&crs.indexOf('gmatin')>=0)return true;
+  if((r==='aprem'||r==='gaprem')&&crs.indexOf('gaprem')>=0)return true;
   return crs.indexOf(r)>=0;
 }
 
@@ -311,6 +305,7 @@ function fd(s){if(!s)return'';var d=new Date(s+'T00:00:00');return d.toLocaleDat
 function today(){return new Date().toISOString().split('T')[0];}
 function tomorrow(){var d=new Date();d.setDate(d.getDate()+1);return d.toISOString().split('T')[0];}
 function hashPIN(pin){var h=5381;for(var i=0;i<pin.length;i++)h=((h<<5)+h)+pin.charCodeAt(i);return(h>>>0).toString(16);}
+function getGroupeUrl(){return localStorage.getItem('sl_wagroupe')||'';}
 
 var selMoniteur=null,selCreneaux=[],rechCr='tous',waMsg='';
 var cache={moniteurs:[],dispos:[]};
@@ -402,13 +397,10 @@ function verifierPinMoniteur(){
   if(!selMoniteur)return;
   var pin='';for(var i=0;i<4;i++)pin+=document.getElementById('mp'+i).value;
   var pinHash=hashPIN(pin);
-  // Verifier d'abord dans Supabase (pin stocke), puis localStorage (fallback)
   var storedHash=selMoniteur.pin||localStorage.getItem('sl_mpin_'+selMoniteur.id);
   if(!storedHash){
-    // Premier acces : sauvegarder dans Supabase ET localStorage
     sbFetch('moniteurs?id=eq.'+selMoniteur.id,{method:'PATCH',body:JSON.stringify({pin:pinHash})}).then(function(){
       selMoniteur.pin=pinHash;
-      // Mettre a jour dans le cache
       var m=cache.moniteurs.find(function(x){return x.id===selMoniteur.id;});
       if(m)m.pin=pinHash;
     }).catch(function(){});
@@ -447,7 +439,7 @@ function sauvegarder(){
   if(!moniteurConnecte){toast('Connectez-vous dabord');return;}
   var d1=document.getElementById('s-debut').value,d2=document.getElementById('s-fin').value;
   if(!d1||!d2){toast('Choisissez les dates');return;}
-  if(d1<today()){toast('La date de debut ne peut pas etre dans le passe');return;}
+  if(d1<today()){toast('La date ne peut pas etre dans le passe');return;}
   if(!selCreneaux.length){toast('Choisissez un creneau');return;}
   var note=document.getElementById('s-note').value.trim();
   var newId=Date.now().toString();
@@ -490,8 +482,8 @@ function suppDispo(id){
 }
 
 function getTel(mid){var m=cache.moniteurs.find(function(x){return x.id===mid;});return m?m.tel||'':'';}
-function contacterWA(tel){tel=(tel||'').replace(/\s/g,'');if(tel)window.open('https://wa.me/'+tel.replace('+',''));else toast('Pas de numero pour ce moniteur');}
-function contacterSMS(tel){tel=(tel||'').replace(/\s/g,'');if(tel)window.open('sms:'+tel);else toast('Pas de numero pour ce moniteur');}
+function contacterWA(tel){tel=(tel||'').replace(/\s/g,'');if(tel)window.open('https://wa.me/'+tel.replace('+',''));else toast('Pas de numero');}
+function contacterSMS(tel){tel=(tel||'').replace(/\s/g,'');if(tel)window.open('sms:'+tel);else toast('Pas de numero');}
 
 function contactBtns(mid){
   var tel=getTel(mid);
@@ -518,6 +510,68 @@ function moniteurCard(m,dispos){
     +'</div></div>';
 }
 
+function renderAujourdhui(){
+  var auj=today();
+  var dateStr=new Date(auj+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('titre-aujourdhui').textContent='Dispos du jour - '+dateStr;
+  var data=cache.dispos.filter(function(d){return d.debut<=auj&&d.fin>=auj;});
+  var el=document.getElementById('dispos-aujourdhui');
+  if(!data.length){el.innerHTML='<div class="empty">Aucune disponibilite ce jour.</div>';return;}
+  var byId={};
+  data.forEach(function(d){var k=d.moniteur_id;if(!byId[k])byId[k]={prenom:d.prenom,nom:d.nom,mid:d.moniteur_id,dispos:[]};byId[k].dispos.push(d);});
+  el.innerHTML=Object.values(byId).map(function(m){return moniteurCard(m,m.dispos);}).join('');
+}
+
+function genWA(){
+  var auj=today();
+  var dateStr=new Date(auj+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  var data=cache.dispos.filter(function(d){return d.debut<=auj&&d.fin>=auj;});
+  var msg='Snowlink - Dispos du jour\n'+dateStr+'\n\n';
+  if(!data.length){msg+='Aucune disponibilite ce jour.';}
+  else{
+    var byId={};
+    data.forEach(function(d){var k=d.moniteur_id;if(!byId[k])byId[k]={prenom:d.prenom,nom:d.nom,creneaux:[],notes:[]};var crs=Array.isArray(d.creneaux)?d.creneaux:[];crs.forEach(function(c){if(byId[k].creneaux.indexOf(c)<0)byId[k].creneaux.push(c);});if(d.note)byId[k].notes.push(d.note);});
+    Object.values(byId).forEach(function(m){msg+=m.prenom+' '+m.nom+'\n';m.creneaux.forEach(function(c){var cr=CRENEAUX[c];if(cr)msg+='  - '+cr.nom+' ('+cr.h+')\n';});if(m.notes.length)msg+='  '+m.notes.join(', ')+'\n';msg+='\n';});
+  }
+  msg+='Envoye via Snowlink';
+  waMsg=msg;
+  var prev=document.getElementById('wa-preview');
+  prev.style.color='#1a1a1a';prev.textContent=msg;
+}
+
+function envoyerWAgroupe(){
+  if(!waMsg)genWA();
+  var groupeUrl=getGroupeUrl();
+  if(groupeUrl){
+    navigator.clipboard.writeText(waMsg).then(function(){toast('Message copie - collez dans le groupe !');}).catch(function(){});
+    setTimeout(function(){window.open(groupeUrl);},500);
+  } else {
+    window.open('https://wa.me/?text='+encodeURIComponent(waMsg));
+  }
+}
+
+function afficherWAPersonne(){
+  var box=document.getElementById('wa-personne-box');
+  box.style.display=box.style.display==='none'?'block':'none';
+}
+
+function envoyerWAPersonne(){
+  if(!waMsg)genWA();
+  var num=document.getElementById('wa-numero').value.replace(/\s/g,'');
+  if(!num){toast('Entrez un numero');return;}
+  window.open('https://wa.me/'+num.replace('+','')+'?text='+encodeURIComponent(waMsg));
+}
+
+function copierWA(){
+  if(!waMsg)genWA();
+  navigator.clipboard.writeText(waMsg).then(function(){toast('Copie !');}).catch(function(){toast('Copie impossible');});
+}
+
+function partagerRecherche(){
+  if(!waMsg)genWA();
+  window.open('https://wa.me/?text='+encodeURIComponent(waMsg));
+}
+
 function rechercher(){
   var d1=document.getElementById('r-debut').value,d2=document.getElementById('r-fin').value;
   var res=document.getElementById('resultats');
@@ -532,11 +586,7 @@ function rechercher(){
   var byId={};
   data.forEach(function(d){var k=d.moniteur_id;if(!byId[k])byId[k]={prenom:d.prenom,nom:d.nom,mid:d.moniteur_id,dispos:[]};byId[k].dispos.push(d);});
   res.innerHTML=Object.values(byId).map(function(m){return moniteurCard(m,m.dispos);}).join('');
-  // Bouton partager les resultats
-  var nbResultats=Object.keys(byId).length;
-  res.innerHTML+='<div style="margin-top:12px;">'
-    +'<button class="btn btn-wa" onclick="partagerRecherche()" style="width:100%;justify-content:center;">'
-    +'<i class="ti ti-brand-whatsapp"></i> Partager ces '+nbResultats+' resultat(s)</button></div>';
+  res.innerHTML+='<div style="margin-top:12px;"><button class="btn btn-wa" onclick="partagerRecherche()" style="width:100%;justify-content:center;"><i class="ti ti-brand-whatsapp"></i> Partager ces resultats</button></div>';
 }
 
 function renderEquipe(){
@@ -559,105 +609,35 @@ function renderEquipe(){
   el.innerHTML=Object.values(byId).map(function(m){return moniteurCard(m,m.dispos);}).join('');
 }
 
-function renderAujourdhui(){
-  var auj=today();
-  var dateStr=new Date(auj+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
-  document.getElementById('titre-aujourdhui').textContent='Dispos du jour - '+dateStr;
-  var data=cache.dispos.filter(function(d){return d.debut<=auj&&d.fin>=auj;});
-  var el=document.getElementById('dispos-aujourdhui');
-  if(!data.length){el.innerHTML='<div class="empty">Aucune disponibilite ce jour.</div>';return;}
-  var byId={};
-  data.forEach(function(d){var k=d.moniteur_id;if(!byId[k])byId[k]={prenom:d.prenom,nom:d.nom,mid:d.moniteur_id,dispos:[]};byId[k].dispos.push(d);});
-  el.innerHTML=Object.values(byId).map(function(m){return moniteurCard(m,m.dispos);}).join('');
-}
-
-function envoyerWAgroupe(){
-  if(!waMsg)genWA();
-  var groupeUrl=localStorage.getItem('sl_wagroupe')||'';
-  if(groupeUrl){
-    // Ouvrir directement le lien groupe avec le message
-    window.open(groupeUrl);
-    setTimeout(function(){
-      navigator.clipboard.writeText(waMsg).then(function(){toast('Message copie - collez-le dans le groupe !');}).catch(function(){});
-    },500);
-  } else {
-    window.open('https://wa.me/?text='+encodeURIComponent(waMsg));
-    toast('Configurez le lien groupe dans Admin !');
-  }
-}
-
-function envoyerWApersonne(){
-  var box=document.getElementById('wa-personne-box');
-  box.style.display=box.style.display==='none'?'block':'none';
-}
-
-function envoyerWA(){
-  if(!waMsg)genWA();
-  var num=document.getElementById('wa-numero').value.replace(/\s/g,'');
-  if(!num){toast('Entrez un numero');return;}
-  window.open('https://wa.me/'+num.replace('+','')+'?text='+encodeURIComponent(waMsg));
-}
-
-function partagerRecherche(){
-  var d1=document.getElementById('r-debut').value;
-  var d2=document.getElementById('r-fin').value;
-  var auj=today();
-  var data=cache.dispos.filter(function(d){
-    if(d.fin<auj)return false;
-    if(d.debut>d2||d.fin<d1)return false;
-    return couvre(d.creneaux,rechCr);
-  });
-  var crNom=rechCr==='tous'?'tous creneaux':(CRENEAUX[rechCr]?CRENEAUX[rechCr].nom:rechCr);
-  var msg='Snowlink - Disponibilites\n';
-  msg+=new Date(d1+'T00:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
-  if(d1!==d2)msg+=' au '+new Date(d2+'T00:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
-  msg+=' - '+crNom+'\n\n';
-  if(!data.length){msg+='Aucun moniteur disponible.';}
-  else{
-    var byId={};
-    data.forEach(function(d){var k=d.moniteur_id;if(!byId[k])byId[k]={prenom:d.prenom,nom:d.nom,creneaux:[],notes:[]};var crs=Array.isArray(d.creneaux)?d.creneaux:[];crs.forEach(function(c){if(byId[k].creneaux.indexOf(c)<0)byId[k].creneaux.push(c);});if(d.note)byId[k].notes.push(d.note);});
-    Object.values(byId).forEach(function(m){msg+=m.prenom+' '+m.nom+'\n';m.creneaux.forEach(function(c){var cr=CRENEAUX[c];if(cr)msg+='  - '+cr.nom+' ('+cr.h+')\n';});if(m.notes.length)msg+='  '+m.notes.join(', ')+'\n';msg+='\n';});
-  }
-  msg+='Envoye via Snowlink';
-  window.open('https://wa.me/?text='+encodeURIComponent(msg));
-}
-
 function buildInviteMsg(m){
   var url=localStorage.getItem('sl_appurl')||APP_URL;
   return 'Bonjour '+m.prenom+' !\n\nTu es invite(e) a rejoindre Snowlink, l\'app de disponibilites de notre equipe !\n\nAccede a l\'app ici :\n'+url+'\n\nRejoins-nous vite !';
 }
+
 function inviterWA(id){
-  var m=cache.moniteurs.find(function(x){return x.id===id;});if(!m)return;
+  var m=cache.moniteurs.find(function(x){return x.id===id;});
+  if(!m)return;
   var msg=buildInviteMsg(m);
   var num=(m.tel||'').replace(/\s/g,'');
   var url=num?'https://wa.me/'+num.replace('+','')+'?text='+encodeURIComponent(msg):'https://wa.me/?text='+encodeURIComponent(msg);
   window.open(url);
-  // 2eme message apres 3 secondes
-  setTimeout(function(){
-    var groupeLien=localStorage.getItem('sl_wagroupe')||'https://chat.whatsapp.com/DTurwe7f15B6EQa0vwvLZe';var msg2='Rejoins aussi notre groupe WhatsApp Snowlink :\n'+groupeLien;
-    var url2=num?'https://wa.me/'+num.replace('+','')+'?text='+encodeURIComponent(msg2):'https://wa.me/?text='+encodeURIComponent(msg2);
-    window.open(url2);
-  },3000);
-}
-function inviterSMS(id){var m=cache.moniteurs.find(function(x){return x.id===id;});if(!m)return;var msg=buildInviteMsg(m);var num=(m.tel||'').replace(/\s/g,'');window.open('sms:'+num+'?body='+encodeURIComponent(msg));}
-
-function genWA(){
-  var date=today();
-  var data=cache.dispos.filter(function(d){return d.debut<=date&&d.fin>=date;});
-  var msg='Snowlink - Dispos\n'+new Date(date+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})+'\n\n';
-  if(!data.length){msg+='Aucune disponibilite pour ce jour.';}
-  else{
-    var byId={};
-    data.forEach(function(d){var k=d.moniteur_id;if(!byId[k])byId[k]={prenom:d.prenom,nom:d.nom,creneaux:[],notes:[]};var crs=Array.isArray(d.creneaux)?d.creneaux:[];crs.forEach(function(c){if(byId[k].creneaux.indexOf(c)<0)byId[k].creneaux.push(c);});if(d.note)byId[k].notes.push(d.note);});
-    Object.values(byId).forEach(function(m){msg+=m.prenom+' '+m.nom+'\n';m.creneaux.forEach(function(c){var cr=CRENEAUX[c];if(cr)msg+='  - '+cr.nom+' ('+cr.h+')\n';});if(m.notes.length)msg+='  '+m.notes.join(', ')+'\n';msg+='\n';});
+  var groupeUrl=getGroupeUrl();
+  if(groupeUrl){
+    setTimeout(function(){
+      var msg2='Rejoins aussi notre groupe WhatsApp Snowlink :\n'+groupeUrl;
+      var url2=num?'https://wa.me/'+num.replace('+','')+'?text='+encodeURIComponent(msg2):'https://wa.me/?text='+encodeURIComponent(msg2);
+      window.open(url2);
+    },3000);
   }
-  msg+='Envoye via Snowlink';
-  waMsg=msg;
-  var prev=document.getElementById('wa-preview');
-  prev.style.color='#1a1a1a';prev.textContent=msg;
 }
-// envoyerWA defini plus haut
-function copierWA(){if(!waMsg)genWA();navigator.clipboard.writeText(waMsg).then(function(){toast('Copie !');}).catch(function(){toast('Copie impossible');});}
+
+function inviterSMS(id){
+  var m=cache.moniteurs.find(function(x){return x.id===id;});
+  if(!m)return;
+  var msg=buildInviteMsg(m);
+  var num=(m.tel||'').replace(/\s/g,'');
+  window.open('sms:'+num+'?body='+encodeURIComponent(msg));
+}
 
 function ajouterMoniteur(){
   var p=document.getElementById('m-prenom').value.trim();
@@ -691,12 +671,12 @@ function suppMoniteur(id){
   renderListeMoniteurs();renderChips();toast('Moniteur supprime');
 }
 
-function saveAppUrl(){
+function saveConfig(){
   var url=document.getElementById('app-url').value.trim();
   localStorage.setItem('sl_appurl',url);
   var waUrl=document.getElementById('wa-groupe-url').value.trim();
   if(waUrl)localStorage.setItem('sl_wagroupe',waUrl);
-  toast('Liens enregistres !');
+  toast('Configuration enregistree !');
 }
 
 function renderListeMoniteurs(){
@@ -719,9 +699,10 @@ function showTab(name){
   document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
   document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
   document.getElementById('tab-'+name).classList.add('active');
-  var tabs=['saisie','recherche','equipe','aujourdhui','admin'];
+  var tabs=['saisie','aujourdhui','recherche','equipe','admin'];
   document.querySelectorAll('.tab')[tabs.indexOf(name)].classList.add('active');
-  if(name==='equipe'){setSyncStatus(null,'Actualisation...');loadAll().then(function(){renderEquipe();});}if(name==='aujourdhui'){setSyncStatus(null,'Actualisation...');loadAll().then(function(){renderAujourdhui();genWA();});}
+  if(name==='equipe'){setSyncStatus(null,'Actualisation...');loadAll().then(function(){renderEquipe();});}
+  if(name==='aujourdhui'){setSyncStatus(null,'Actualisation...');loadAll().then(function(){renderAujourdhui();genWA();});}
   if(name==='saisie'){renderChips();}
   if(name==='admin'){
     if(adminUnlocked){showAdminPanel();return;}
@@ -738,7 +719,6 @@ document.getElementById('s-debut').value=t;
 document.getElementById('s-fin').value=t;
 document.getElementById('r-debut').value=t;
 document.getElementById('r-fin').value=t;
-document.getElementById('wa-date').value=tomorrow();
 var savedUrl=localStorage.getItem('sl_appurl');
 if(savedUrl)document.getElementById('app-url').value=savedUrl;
 var savedWaGroupe=localStorage.getItem('sl_wagroupe');
