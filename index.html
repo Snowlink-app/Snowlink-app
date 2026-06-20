@@ -646,7 +646,13 @@ function renderEquipe(){
 
 function buildInviteMsg(m){
   var url=localStorage.getItem('sl_appurl')||APP_URL;
-  return 'Bonjour '+m.prenom+' !\n\nTu es invite(e) a rejoindre Snowlink, l\'app de disponibilites de notre equipe !\n\nAccede a l\'app ici :\n'+url+'\n\nRejoins-nous vite !';
+  var groupeUrl=getGroupeUrl();
+  var msg='Bonjour '+m.prenom+' !\n\n';
+  msg+='Tu es invite(e) a rejoindre Snowlink !\n\n';
+  msg+='📱 *Application :*\n'+url+'\n\n';
+  if(groupeUrl){msg+='💬 *Groupe WhatsApp :*\n'+groupeUrl+'\n\n';}
+  msg+='Rejoins-nous vite !';
+  return msg;
 }
 
 function inviterWA(id){
