@@ -676,12 +676,7 @@ function inviterSMS(id){
 function buildInviteGroupeMsg(m){
   var groupeUrl=getGroupeUrl();
   if(!groupeUrl)return null;
-  return 'Bonjour '+m.prenom+' !
-
-Rejoins aussi notre groupe WhatsApp Snowlink pour rester connecte avec toute l'equipe :
-'+groupeUrl+'
-
-A bientot !';
+  return 'Bonjour '+m.prenom+' ! Rejoins notre groupe WhatsApp Snowlink et clique sur le lien :\n'+groupeUrl;
 }
 
 function ajouterMoniteur(){
