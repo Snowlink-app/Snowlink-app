@@ -119,6 +119,7 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
   <div class="section-title">Mes disponibilites</div>
   <div class="card">
     <div class="profil-label"><i class="ti ti-user"></i> Qui es-tu ?</div>
+    <input type="text" id="filtre-moniteur" placeholder="Tape ton prenom pour te trouver..." oninput="filtrerChips(this.value)" style="margin-bottom:10px;"/>
     <div class="moniteur-chips" id="chips-saisie"></div>
     <p class="hint">Appuie sur ton nom pour te connecter.</p>
   </div>
@@ -392,6 +393,23 @@ function renderChips(){
   }).join('');
 }
 
+function filtrerChips(val){
+  var v=val.toLowerCase().trim();
+  var c=document.getElementById('chips-saisie');
+  if(!cache.moniteurs.length)return;
+  var filtered=v?cache.moniteurs.filter(function(m){return(m.prenom+' '+m.nom).toLowerCase().indexOf(v)>=0;}):cache.moniteurs;
+  if(!filtered.length){c.innerHTML='<span style="font-size:12px;color:#aaa">Aucun moniteur trouve.</span>';return;}
+  c.innerHTML=filtered.map(function(m){
+    var i=cache.moniteurs.indexOf(m);
+    var col=PALETTE[i>=0?i%PALETTE.length:0];
+    var isSel=moniteurConnecte&&moniteurConnecte.id===m.id;
+    return '<span class="profil-chip" style="background:'+col.bg+';border-color:'+(isSel?col.dot:col.border)+';color:'+col.text+';'+(isSel?'box-shadow:0 0 0 2px '+col.dot+';':'')+'" onclick="selectionnerMoniteur(''+m.id+'')">'
+      +'<span style="width:10px;height:10px;border-radius:50%;background:'+col.dot+';display:inline-block;flex-shrink:0"></span>'
+      +'<span style="font-size:13px;font-weight:500;">'+m.prenom+' '+m.nom+'</span>'
+      +'</span>';
+  }).join('');
+}
+
 function selectionnerMoniteur(id){
   var m=cache.moniteurs.find(function(x){return x.id===id;});
   if(!m)return;
@@ -531,8 +549,14 @@ function buildWAmsg(dispos,titre){
   var msg='Snowlink - '+titre+'\n\n';
   if(!dispos.length){msg+='Aucune disponibilite.';return msg;}
   var byId={};
-  dispos.forEach(function(d){var k=d.moniteur_id;if(!byId[k])byId[k]={prenom:d.prenom,nom:d.nom,creneaux:[],notes:[]};var crs=Array.isArray(d.creneaux)?d.creneaux:[];crs.forEach(function(c){if(byId[k].creneaux.indexOf(c)<0)byId[k].creneaux.push(c);});if(d.note)byId[k].notes.push(d.note);});
-  Object.values(byId).forEach(function(m){msg+=m.prenom+' '+m.nom+'\n';m.creneaux.forEach(function(c){var cr=CRENEAUX[c];if(cr)msg+='  - '+cr.nom+' ('+cr.h+')\n';});if(m.notes.length)msg+='  '+m.notes.join(', ')+'\n';msg+='\n';});
+  dispos.forEach(function(d){var k=d.moniteur_id;if(!byId[k])byId[k]={prenom:d.prenom,nom:d.nom,moniteur_id:d.moniteur_id,creneaux:[],notes:[]};var crs=Array.isArray(d.creneaux)?d.creneaux:[];crs.forEach(function(c){if(byId[k].creneaux.indexOf(c)<0)byId[k].creneaux.push(c);});if(d.note)byId[k].notes.push(d.note);});
+  Object.values(byId).forEach(function(m){
+    var tel=getTel(m.moniteur_id);
+    msg+='👤 '+m.prenom+' '+m.nom+(tel?' - '+tel:'')+'\n';
+    m.creneaux.forEach(function(c){var cr=CRENEAUX[c];if(cr)msg+='  - '+cr.nom+' ('+cr.h+')\n';});
+    if(m.notes.length)msg+='  '+m.notes.join(', ')+'\n';
+    msg+='\n';
+  });
   msg+='Envoye via Snowlink';
   return msg;
 }
@@ -542,13 +566,7 @@ function partagerAujourdhui(){
   var dateStr=new Date(auj+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
   var data=cache.dispos.filter(function(d){return d.debut<=auj&&d.fin>=auj;});
   var msg=buildWAmsg(data,'Dispos du '+dateStr);
-  var groupeUrl=getGroupeUrl();
-  if(groupeUrl){
-    navigator.clipboard.writeText(msg).then(function(){toast('Message copie - collez dans le groupe !');}).catch(function(){});
-    setTimeout(function(){window.open(groupeUrl);},600);
-  } else {
-    window.open('https://wa.me/?text='+encodeURIComponent(msg));
-  }
+  window.open('https://wa.me/?text='+encodeURIComponent(msg));
 }
 
 function renderAujourdhui(){
@@ -584,13 +602,7 @@ function partagerDemain(){
   var dateStr=new Date(dem+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
   var data=cache.dispos.filter(function(d){return d.debut<=dem&&d.fin>=dem;});
   var msg=buildWAmsg(data,'Dispos de '+dateStr);
-  var groupeUrl=getGroupeUrl();
-  if(groupeUrl){
-    navigator.clipboard.writeText(msg).then(function(){toast('Message copie - collez dans le groupe !');}).catch(function(){});
-    setTimeout(function(){window.open(groupeUrl);},600);
-  } else {
-    window.open('https://wa.me/?text='+encodeURIComponent(msg));
-  }
+  window.open('https://wa.me/?text='+encodeURIComponent(msg));
 }
 
 function rechercher(){
@@ -750,7 +762,7 @@ function showTab(name){
   if(name==='equipe'){setSyncStatus(null,'Actualisation...');loadAll().then(function(){renderEquipe();});}
   if(name==='aujourdhui'){setSyncStatus(null,'Actualisation...');loadAll().then(function(){renderAujourdhui();});}
   if(name==='demain'){setSyncStatus(null,'Actualisation...');loadAll().then(function(){renderDemain();});}
-  if(name==='saisie'){renderChips();}
+  if(name==='saisie'){var f=document.getElementById('filtre-moniteur');if(f)f.value='';renderChips();}
   if(name==='admin'){
     if(adminUnlocked){showAdminPanel();return;}
     var hasPIN=getPINHash();
