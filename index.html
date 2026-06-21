@@ -107,7 +107,7 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
 </div>
 <div class="tabs">
   <div class="tab active" onclick="showTab('saisie')"><i class="ti ti-calendar-plus"></i>Mes dispo</div>
-  <div class="tab" onclick="showTab('aujourdhui')"><i class="ti ti-sun"></i>Aujourd'hui</div>
+  <div class="tab" onclick="showTab('aujourdhui')"><i class="ti ti-sun"></i>Auj.</div>
   <div class="tab" onclick="showTab('demain')"><i class="ti ti-sun-wind"></i>Demain</div>
   <div class="tab" onclick="showTab('recherche')"><i class="ti ti-search"></i>Chercher</div>
   <div class="tab" onclick="showTab('equipe')"><i class="ti ti-users"></i>Equipe</div>
@@ -403,7 +403,8 @@ function filtrerChips(val){
     var i=cache.moniteurs.indexOf(m);
     var col=PALETTE[i>=0?i%PALETTE.length:0];
     var isSel=moniteurConnecte&&moniteurConnecte.id===m.id;
-    return '<span class="profil-chip" style="background:'+col.bg+';border-color:'+(isSel?col.dot:col.border)+';color:'+col.text+';'+(isSel?'box-shadow:0 0 0 2px '+col.dot+';':'')+'" onclick="selectionnerMoniteur(''+m.id+'')">'
+    var style='background:'+col.bg+';border-color:'+(isSel?col.dot:col.border)+';color:'+col.text+';'+(isSel?'box-shadow:0 0 0 2px '+col.dot+';':'');
+    return '<span class="profil-chip" style="'+style+'" onclick="selectionnerMoniteur(\x27'+m.id+'\x27)">'
       +'<span style="width:10px;height:10px;border-radius:50%;background:'+col.dot+';display:inline-block;flex-shrink:0"></span>'
       +'<span style="font-size:13px;font-weight:500;">'+m.prenom+' '+m.nom+'</span>'
       +'</span>';
