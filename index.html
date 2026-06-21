@@ -627,14 +627,18 @@ function partagerAujourdhui(){
   var auj=today();
   var dateStr=new Date(auj+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
   var data=cache.dispos.filter(function(d){return d.debut<=auj&&d.fin>=auj;});
-  ouvrirPartage(buildWAmsg(data,'Dispos du '+dateStr));
+  var msg=buildWAmsg(data,'Dispos du '+dateStr);
+  var url='https://wa.me/?text='+encodeURIComponent(msg);
+  if(isMobile()){window.location.href=url;}else{ouvrirPartage(msg);}
 }
 
 function partagerDemain(){
   var dem=tomorrow();
   var dateStr=new Date(dem+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
   var data=cache.dispos.filter(function(d){return d.debut<=dem&&d.fin>=dem;});
-  ouvrirPartage(buildWAmsg(data,'Dispos de '+dateStr));
+  var msg=buildWAmsg(data,'Dispos de '+dateStr);
+  var url='https://wa.me/?text='+encodeURIComponent(msg);
+  if(isMobile()){window.location.href=url;}else{ouvrirPartage(msg);}
 }
 
 function renderAujourdhui(){
@@ -689,7 +693,8 @@ function partagerRecherche(d1,d2){
   });
   var crNom=rechCr==='tous'?'tous creneaux':(CRENEAUX[rechCr]?CRENEAUX[rechCr].nom:rechCr);
   var titre='Dispos '+fd(d1)+(d1!==d2?' au '+fd(d2):'')+' - '+crNom;
-  ouvrirPartage(buildWAmsg(data,titre));
+  var msg=buildWAmsg(data,titre);
+  if(isMobile()){window.location.href='https://wa.me/?text='+encodeURIComponent(msg);}else{ouvrirPartage(msg);}
 }
 
 function renderEquipe(){
