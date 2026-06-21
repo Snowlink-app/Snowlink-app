@@ -75,9 +75,11 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
 .pin-input{width:48px;height:56px;text-align:center;font-size:22px;font-weight:600;border-radius:10px;border:0.5px solid #ddd;background:#fafafa;color:#1a1a1a;}
 .admin-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 8px;border-radius:999px;background:#EEEDFE;color:#3C3489;border:0.5px solid #AFA9EC;margin-left:8px;}
 .setup-box{background:#E6F1FB;border:0.5px solid #85B7EB;border-radius:10px;padding:12px 14px;margin-bottom:12px;}
-.wa-preview{background:#fafafa;border:0.5px solid #e8e8e8;border-radius:10px;padding:12px;margin-top:10px;font-size:12px;color:#555;white-space:pre-wrap;line-height:1.6;min-height:50px;}
 .contact-btns{display:flex;gap:4px;flex-shrink:0;}
 .profil-label{font-size:12px;font-weight:600;color:#185FA5;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:500;display:flex;align-items:flex-end;justify-content:center;}
+.modal-box{background:#fff;border-radius:16px 16px 0 0;padding:20px 16px;width:100%;max-width:600px;max-height:75vh;overflow-y:auto;}
+.modal-msg{background:#f5f5f5;border-radius:10px;padding:12px;font-size:12px;white-space:pre-wrap;line-height:1.6;color:#333;margin:10px 0;max-height:220px;overflow-y:auto;border:0.5px solid #e0e0e0;}
 </style>
 </head>
 <body>
@@ -307,26 +309,26 @@ function couvre(crs,r){
 
 function getColor(id){var i=cache.moniteurs.findIndex(function(m){return m.id===id;});return PALETTE[i>=0?i%PALETTE.length:0];}
 function ini(p,n){return((p||'?')[0]+(n||'?')[0]).toUpperCase();}
-
-function fdEffectif(debut,fin){
-  var auj=today();
-  var d=debut<auj?auj:debut;
-  var f=fin;
-  if(d===f)return fd(d);
-  return fd(d)+' - '+fd(f);
-}
-
+function fdEffectif(debut,fin){var auj=today();var d=debut<auj?auj:debut;var f=fin;if(d===f)return fd(d);return fd(d)+' - '+fd(f);}
 function fd(s){if(!s)return'';var d=new Date(s+'T00:00:00');return d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});}
 function today(){return new Date().toISOString().split('T')[0];}
+function tomorrow(){var d=new Date();d.setDate(d.getDate()+1);return d.toISOString().split('T')[0];}
 function hashPIN(pin){var h=5381;for(var i=0;i<pin.length;i++)h=((h<<5)+h)+pin.charCodeAt(i);return(h>>>0).toString(16);}
 function getGroupeUrl(){return localStorage.getItem('sl_wagroupe')||'';}
+function escHtml(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function isMobile(){return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);}
 
 var selMoniteur=null,selCreneaux=[],rechCr='tous';
 var cache={moniteurs:[],dispos:[]};
 var adminUnlocked=false;
 var moniteurConnecte=null;
+var _msgPartage='';
 
-function setSyncStatus(ok,msg){var dot=document.getElementById('sync-dot');dot.className='dot'+(ok===null?' loading':ok?' ':' off');document.getElementById('sync-label').textContent=msg;}
+function setSyncStatus(ok,msg){
+  var dot=document.getElementById('sync-dot');
+  dot.className='dot'+(ok===null?' loading':ok?' ':' off');
+  document.getElementById('sync-label').textContent=msg;
+}
 
 function sbFetch(path,options){
   options=options||{};
@@ -375,7 +377,7 @@ function getPINHash(){return localStorage.getItem('sl_pin')||null;}
 function pinSetupNext(i){if(document.getElementById('ps'+i).value&&i<3)document.getElementById('ps'+(i+1)).focus();}
 function pinLoginNext(i){if(document.getElementById('pl'+i).value&&i<3)document.getElementById('pl'+(i+1)).focus();if(i===3&&document.getElementById('pl'+i).value)checkPIN();}
 function savePIN(){var pin='';for(var i=0;i<4;i++)pin+=document.getElementById('ps'+i).value;if(pin.length<4){toast('Entrez 4 chiffres');return;}localStorage.setItem('sl_pin',hashPIN(pin));adminUnlocked=true;showAdminPanel();toast('PIN defini !');}
-function checkPIN(){var pin='';for(var i=0;i<4;i++)pin+=document.getElementById('pl'+i).value;if(hashPIN(pin)===getPINHash()){adminUnlocked=true;showAdminPanel();}else{document.getElementById('pin-error').textContent='Code incorrect.';for(var i=0;i<4;i++){var el=document.getElementById('pl'+i);el.value='';el.style.borderColor='#E24B4A';}document.getElementById('pl0').focus();setTimeout(function(){for(var i=0;i<4;i++)document.getElementById('pl'+i).style.borderColor='';},1500);}}
+function checkPIN(){var pin='';for(var i=0;i<4;i++)pin+=document.getElementById('pl'+i).value;if(hashPIN(pin)===getPINHash()){adminUnlocked=true;showAdminPanel();}else{document.getElementById('pin-error').textContent='Code incorrect.';for(var j=0;j<4;j++){var el=document.getElementById('pl'+j);el.value='';el.style.borderColor='#E24B4A';}document.getElementById('pl0').focus();setTimeout(function(){for(var k=0;k<4;k++)document.getElementById('pl'+k).style.borderColor='';},1500);}}
 function showAdminPanel(){document.getElementById('pin-setup').style.display='none';document.getElementById('pin-login').style.display='none';document.getElementById('admin-panel').style.display='block';document.getElementById('admin-badge').style.display='inline-flex';renderListeMoniteurs();}
 function adminLogout(){adminUnlocked=false;document.getElementById('admin-panel').style.display='none';document.getElementById('admin-badge').style.display='none';showAdminLogin();}
 function showAdminLogin(){for(var i=0;i<4;i++)document.getElementById('pl'+i).value='';document.getElementById('pin-error').textContent='';document.getElementById('pin-login').style.display='block';setTimeout(function(){document.getElementById('pl0').focus();},100);}
@@ -386,9 +388,10 @@ function renderChips(){
   c.innerHTML=cache.moniteurs.map(function(m,i){
     var col=PALETTE[i%PALETTE.length];
     var isSel=moniteurConnecte&&moniteurConnecte.id===m.id;
-    return '<span class="profil-chip" style="background:'+col.bg+';border-color:'+(isSel?col.dot:col.border)+';color:'+col.text+';'+(isSel?'box-shadow:0 0 0 2px '+col.dot+';':'')+'" onclick="selectionnerMoniteur(\''+m.id+'\')">'
+    var style='background:'+col.bg+';border-color:'+(isSel?col.dot:col.border)+';color:'+col.text+';'+(isSel?'box-shadow:0 0 0 2px '+col.dot+';':'');
+    return '<span class="profil-chip" style="'+style+'" onclick="selectionnerMoniteur('+JSON.stringify(m.id)+')">'
       +'<span style="width:10px;height:10px;border-radius:50%;background:'+col.dot+';display:inline-block;flex-shrink:0"></span>'
-      +'<span style="font-size:13px;font-weight:500;">'+m.prenom+' '+m.nom+'</span>'
+      +'<span style="font-size:13px;font-weight:500;">'+escHtml(m.prenom)+' '+escHtml(m.nom)+'</span>'
       +'</span>';
   }).join('');
 }
@@ -404,9 +407,9 @@ function filtrerChips(val){
     var col=PALETTE[i>=0?i%PALETTE.length:0];
     var isSel=moniteurConnecte&&moniteurConnecte.id===m.id;
     var style='background:'+col.bg+';border-color:'+(isSel?col.dot:col.border)+';color:'+col.text+';'+(isSel?'box-shadow:0 0 0 2px '+col.dot+';':'');
-    return '<span class="profil-chip" style="'+style+'" onclick="selectionnerMoniteur(\x27'+m.id+'\x27)">'
+    return '<span class="profil-chip" style="'+style+'" onclick="selectionnerMoniteur('+JSON.stringify(m.id)+')">'
       +'<span style="width:10px;height:10px;border-radius:50%;background:'+col.dot+';display:inline-block;flex-shrink:0"></span>'
-      +'<span style="font-size:13px;font-weight:500;">'+m.prenom+' '+m.nom+'</span>'
+      +'<span style="font-size:13px;font-weight:500;">'+escHtml(m.prenom)+' '+escHtml(m.nom)+'</span>'
       +'</span>';
   }).join('');
 }
@@ -445,9 +448,9 @@ function verifierPinMoniteur(){
     ouvrirFormulaireMoniteur();
   } else {
     document.getElementById('mon-pin-error').textContent='Code incorrect.';
-    for(var i=0;i<4;i++){var el=document.getElementById('mp'+i);el.value='';el.style.borderColor='#E24B4A';}
+    for(var j=0;j<4;j++){var el=document.getElementById('mp'+j);el.value='';el.style.borderColor='#E24B4A';}
     document.getElementById('mp0').focus();
-    setTimeout(function(){for(var i=0;i<4;i++)document.getElementById('mp'+i).style.borderColor='';},1500);
+    setTimeout(function(){for(var k=0;k<4;k++)document.getElementById('mp'+k).style.borderColor='';},1500);
   }
 }
 
@@ -504,8 +507,8 @@ function renderMesDispos(){
     return '<div style="background:'+col.bg+';border:0.5px solid '+col.border+';border-radius:10px;padding:10px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:flex-start;">'
       +'<div><span style="font-size:13px;font-weight:600;color:'+col.text+'">'+fdEffectif(d.debut,d.fin)+'</span>'
       +'<span style="margin-left:4px">'+crs.map(badgeCr).join(' ')+'</span>'
-      +(d.note?'<div style="font-size:11px;color:'+col.text+';opacity:.75;margin-top:2px">'+d.note+'</div>':'')
-      +'</div><button class="del-btn" onclick="suppDispo(\''+d.id+'\')">&#x2715;</button></div>';
+      +(d.note?'<div style="font-size:11px;color:'+col.text+';opacity:.75;margin-top:2px">'+escHtml(d.note)+'</div>':'')
+      +'</div><button class="del-btn" onclick="suppDispo('+JSON.stringify(d.id)+')">&#x2715;</button></div>';
   }).join('');
 }
 
@@ -523,34 +526,82 @@ function contacterSMS(tel){tel=(tel||'').replace(/\s/g,'');if(tel)window.open('s
 function contactBtns(mid){
   var tel=getTel(mid);
   if(!tel)return '';
+  var telEsc=tel.replace(/'/g,"\\'");
   return '<div class="contact-btns">'
-    +'<button class="btn btn-wa btn-sm" onclick="contacterWA(\''+tel+'\')"><i class="ti ti-brand-whatsapp"></i></button>'
-    +'<button class="btn btn-sms btn-sm" onclick="contacterSMS(\''+tel+'\')"><i class="ti ti-message"></i></button>'
+    +'<button class="btn btn-wa btn-sm" onclick="contacterWA('+JSON.stringify(tel)+')"><i class="ti ti-brand-whatsapp"></i></button>'
+    +'<button class="btn btn-sms btn-sm" onclick="contacterSMS('+JSON.stringify(tel)+')"><i class="ti ti-message"></i></button>'
     +'</div>';
 }
 
 function moniteurCard(m,dispos){
   var col=getColor(m.mid);
-  var auj=today();
   return '<div class="moniteur-card" style="background:'+col.bg+';border-color:'+col.border+';">'
     +'<div class="avatar" style="width:36px;height:36px;font-size:12px;background:'+col.dot+';">'+ini(m.prenom,m.nom)+'</div>'
     +'<div style="flex:1;">'
     +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">'
-    +'<div class="tag-nom" style="color:'+col.text+'">'+m.prenom+' '+m.nom+'</div>'
+    +'<div class="tag-nom" style="color:'+col.text+'">'+escHtml(m.prenom)+' '+escHtml(m.nom)+'</div>'
     +contactBtns(m.mid)
     +'</div>'
     +dispos.map(function(d){
       var crs=Array.isArray(d.creneaux)?d.creneaux:[];
-      return '<div class="tag-d" style="color:'+col.text+'">'+fdEffectif(d.debut,d.fin)+' '+crs.map(badgeCr).join(' ')+(d.note?' - '+d.note:'')+'</div>';
+      return '<div class="tag-d" style="color:'+col.text+'">'+fdEffectif(d.debut,d.fin)+' '+crs.map(badgeCr).join(' ')+(d.note?' - '+escHtml(d.note):'')+'</div>';
     }).join('')
     +'</div></div>';
+}
+
+/* ---- PARTAGE WHATSAPP : modal sur PC, direct sur mobile ---- */
+function ouvrirPartage(msg){
+  _msgPartage=msg;
+  if(isMobile()){
+    window.open('https://wa.me/?text='+encodeURIComponent(msg));
+    return;
+  }
+  var overlay=document.createElement('div');
+  overlay.className='modal-overlay';
+  overlay.id='share-modal';
+  overlay.innerHTML='<div class="modal-box">'
+    +'<div style="font-size:15px;font-weight:600;margin-bottom:4px;color:#1a1a1a;">Partager sur WhatsApp</div>'
+    +'<p style="font-size:12px;color:#888;margin-bottom:8px;">WhatsApp Web ne supporte pas le pre-remplissage automatique. Copiez le message puis collez-le dans votre conversation.</p>'
+    +'<div class="modal-msg">'+escHtml(msg)+'</div>'
+    +'<div style="display:flex;gap:8px;margin-top:10px;">'
+    +'<button class="btn btn-green" style="flex:1;margin-top:0" onclick="copierMsgPartage()"><i class="ti ti-copy"></i> Copier le message</button>'
+    +'<button class="btn btn-primary" style="flex:1;margin-top:0" onclick="window.open(\'https://web.whatsapp.com\')"><i class="ti ti-brand-whatsapp"></i> Ouvrir WhatsApp Web</button>'
+    +'</div>'
+    +'<button class="btn btn-ghost btn-full" style="margin-top:8px;" onclick="fermerModal()">Fermer</button>'
+    +'</div>';
+  overlay.addEventListener('click',function(e){if(e.target===overlay)fermerModal();});
+  document.body.appendChild(overlay);
+}
+
+function fermerModal(){var m=document.getElementById('share-modal');if(m)m.remove();}
+
+function copierMsgPartage(){
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(_msgPartage).then(function(){toast('Message copie !');}).catch(function(){copierFallback();});
+  } else {
+    copierFallback();
+  }
+}
+function copierFallback(){
+  var ta=document.createElement('textarea');
+  ta.value=_msgPartage;
+  ta.style.position='fixed';ta.style.top='-9999px';
+  document.body.appendChild(ta);ta.focus();ta.select();
+  try{document.execCommand('copy');toast('Message copie !');}catch(e){toast('Copiez manuellement le texte ci-dessus');}
+  document.body.removeChild(ta);
 }
 
 function buildWAmsg(dispos,titre){
   var msg='Snowlink - '+titre+'\n\n';
   if(!dispos.length){msg+='Aucune disponibilite.';return msg;}
   var byId={};
-  dispos.forEach(function(d){var k=d.moniteur_id;if(!byId[k])byId[k]={prenom:d.prenom,nom:d.nom,moniteur_id:d.moniteur_id,creneaux:[],notes:[]};var crs=Array.isArray(d.creneaux)?d.creneaux:[];crs.forEach(function(c){if(byId[k].creneaux.indexOf(c)<0)byId[k].creneaux.push(c);});if(d.note)byId[k].notes.push(d.note);});
+  dispos.forEach(function(d){
+    var k=d.moniteur_id;
+    if(!byId[k])byId[k]={prenom:d.prenom,nom:d.nom,moniteur_id:d.moniteur_id,creneaux:[],notes:[]};
+    var crs=Array.isArray(d.creneaux)?d.creneaux:[];
+    crs.forEach(function(c){if(byId[k].creneaux.indexOf(c)<0)byId[k].creneaux.push(c);});
+    if(d.note)byId[k].notes.push(d.note);
+  });
   Object.values(byId).forEach(function(m){
     var tel=getTel(m.moniteur_id);
     msg+='👤 '+m.prenom+' '+m.nom+(tel?' - '+tel:'')+'\n';
@@ -566,8 +617,14 @@ function partagerAujourdhui(){
   var auj=today();
   var dateStr=new Date(auj+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
   var data=cache.dispos.filter(function(d){return d.debut<=auj&&d.fin>=auj;});
-  var msg=buildWAmsg(data,'Dispos du '+dateStr);
-  window.open('https://wa.me/?text='+encodeURIComponent(msg));
+  ouvrirPartage(buildWAmsg(data,'Dispos du '+dateStr));
+}
+
+function partagerDemain(){
+  var dem=tomorrow();
+  var dateStr=new Date(dem+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  var data=cache.dispos.filter(function(d){return d.debut<=dem&&d.fin>=dem;});
+  ouvrirPartage(buildWAmsg(data,'Dispos de '+dateStr));
 }
 
 function renderAujourdhui(){
@@ -583,8 +640,6 @@ function renderAujourdhui(){
   document.getElementById('aujourdhui-partager').style.display='block';
 }
 
-function tomorrow(){var d=new Date();d.setDate(d.getDate()+1);return d.toISOString().split('T')[0];}
-
 function renderDemain(){
   var dem=tomorrow();
   var dateStr=new Date(dem+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
@@ -596,14 +651,6 @@ function renderDemain(){
   data.forEach(function(d){var k=d.moniteur_id;if(!byId[k])byId[k]={prenom:d.prenom,nom:d.nom,mid:d.moniteur_id,dispos:[]};byId[k].dispos.push(d);});
   el.innerHTML=Object.values(byId).map(function(m){return moniteurCard(m,m.dispos);}).join('');
   document.getElementById('demain-partager').style.display='block';
-}
-
-function partagerDemain(){
-  var dem=tomorrow();
-  var dateStr=new Date(dem+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
-  var data=cache.dispos.filter(function(d){return d.debut<=dem&&d.fin>=dem;});
-  var msg=buildWAmsg(data,'Dispos de '+dateStr);
-  window.open('https://wa.me/?text='+encodeURIComponent(msg));
 }
 
 function rechercher(){
@@ -620,8 +667,7 @@ function rechercher(){
   var byId={};
   data.forEach(function(d){var k=d.moniteur_id;if(!byId[k])byId[k]={prenom:d.prenom,nom:d.nom,mid:d.moniteur_id,dispos:[]};byId[k].dispos.push(d);});
   res.innerHTML=Object.values(byId).map(function(m){return moniteurCard(m,m.dispos);}).join('');
-  var d1Str=fd(d1)+(d1!==d2?' - '+fd(d2):'');
-  res.innerHTML+='<div style="margin-top:12px;"><button class="btn btn-wa btn-full" onclick="partagerRecherche(\''+d1+'\',\''+d2+'\')"><i class="ti ti-brand-whatsapp"></i> Partager ces resultats</button></div>';
+  res.innerHTML+='<div style="margin-top:12px;"><button class="btn btn-wa btn-full" onclick="partagerRecherche('+JSON.stringify(d1)+','+JSON.stringify(d2)+')"><i class="ti ti-brand-whatsapp"></i> Partager ces resultats</button></div>';
 }
 
 function partagerRecherche(d1,d2){
@@ -633,8 +679,7 @@ function partagerRecherche(d1,d2){
   });
   var crNom=rechCr==='tous'?'tous creneaux':(CRENEAUX[rechCr]?CRENEAUX[rechCr].nom:rechCr);
   var titre='Dispos '+fd(d1)+(d1!==d2?' au '+fd(d2):'')+' - '+crNom;
-  var msg=buildWAmsg(data,titre);
-  window.open('https://wa.me/?text='+encodeURIComponent(msg));
+  ouvrirPartage(buildWAmsg(data,titre));
 }
 
 function renderEquipe(){
@@ -648,7 +693,7 @@ function renderEquipe(){
     if(!m)return'';
     var col=getColor(id);
     return '<span class="legend-chip" style="background:'+col.bg+';border-color:'+col.border+';color:'+col.text+';">'
-      +'<span style="width:8px;height:8px;border-radius:50%;background:'+col.dot+';display:inline-block"></span> '+m.prenom+' '+m.nom+'</span>';
+      +'<span style="width:8px;height:8px;border-radius:50%;background:'+col.dot+';display:inline-block"></span> '+escHtml(m.prenom)+' '+escHtml(m.nom)+'</span>';
   }).join('');
   var el=document.getElementById('vue-equipe');
   if(!disposFutures.length){el.innerHTML='<div class="empty">Aucune disponibilite a venir.</div>';return;}
@@ -662,10 +707,16 @@ function buildInviteMsg(m){
   var groupeUrl=getGroupeUrl();
   var msg='Bonjour '+m.prenom+' !\n\n';
   msg+='Tu es invite(e) a rejoindre Snowlink !\n\n';
-  msg+='📱 *Application :*\n'+url+'\n\n';
-  if(groupeUrl){msg+='💬 *Groupe WhatsApp :*\n'+groupeUrl+'\n\n';}
+  msg+='Acces application :\n'+url+'\n\n';
+  if(groupeUrl){msg+='Groupe WhatsApp :\n'+groupeUrl+'\n\n';}
   msg+='Rejoins-nous vite !';
   return msg;
+}
+
+function buildInviteGroupeMsg(m){
+  var groupeUrl=getGroupeUrl();
+  if(!groupeUrl)return null;
+  return 'Bonjour '+m.prenom+' ! Rejoins notre groupe WhatsApp Snowlink :\n'+groupeUrl;
 }
 
 function inviterWA(id){
@@ -675,13 +726,6 @@ function inviterWA(id){
   var num=(m.tel||'').replace(/\s/g,'');
   var url=num?'https://wa.me/'+num.replace('+','')+'?text='+encodeURIComponent(msg):'https://wa.me/?text='+encodeURIComponent(msg);
   window.open(url);
-  var msg2=buildInviteGroupeMsg(m);
-  if(msg2){
-    setTimeout(function(){
-      var url2=num?'https://wa.me/'+num.replace('+','')+'?text='+encodeURIComponent(msg2):'https://wa.me/?text='+encodeURIComponent(msg2);
-      window.open(url2);
-    },3000);
-  }
 }
 
 function inviterSMS(id){
@@ -690,12 +734,6 @@ function inviterSMS(id){
   var msg=buildInviteMsg(m);
   var num=(m.tel||'').replace(/\s/g,'');
   window.open('sms:'+num+'?body='+encodeURIComponent(msg));
-}
-
-function buildInviteGroupeMsg(m){
-  var groupeUrl=getGroupeUrl();
-  if(!groupeUrl)return null;
-  return 'Bonjour '+m.prenom+' ! Rejoins notre groupe WhatsApp Snowlink et clique sur le lien :\n'+groupeUrl;
 }
 
 function ajouterMoniteur(){
@@ -745,11 +783,11 @@ function renderListeMoniteurs(){
     var col=PALETTE[i%PALETTE.length];
     return '<div class="moniteur-row">'
       +'<div class="avatar" style="width:30px;height:30px;font-size:11px;background:'+col.dot+';">'+ini(m.prenom,m.nom)+'</div>'
-      +'<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;">'+m.prenom+' '+m.nom+'</div>'
+      +'<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;">'+escHtml(m.prenom)+' '+escHtml(m.nom)+'</div>'
       +'<div style="font-size:11px;color:#aaa;">'+(m.tel||'Pas de numero')+'</div></div>'
-      +'<button class="btn btn-wa btn-sm" onclick="inviterWA(\''+m.id+'\')" title="WhatsApp"><i class="ti ti-brand-whatsapp"></i></button>'
-      +'<button class="btn btn-sms btn-sm" style="margin-left:4px" onclick="inviterSMS(\''+m.id+'\')" title="SMS"><i class="ti ti-message"></i></button>'
-      +'<button class="del-btn" onclick="suppMoniteur(\''+m.id+'\')">&#x2715;</button>'
+      +'<button class="btn btn-wa btn-sm" onclick="inviterWA('+JSON.stringify(m.id)+')" title="WhatsApp"><i class="ti ti-brand-whatsapp"></i></button>'
+      +'<button class="btn btn-sms btn-sm" style="margin-left:4px" onclick="inviterSMS('+JSON.stringify(m.id)+')" title="SMS"><i class="ti ti-message"></i></button>'
+      +'<button class="del-btn" onclick="suppMoniteur('+JSON.stringify(m.id)+')">&#x2715;</button>'
       +'</div>';
   }).join('');
 }
