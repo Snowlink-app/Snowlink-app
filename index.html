@@ -59,8 +59,8 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
 .tag-d{font-size:11px;margin-top:3px;opacity:.85;}
 .empty{color:#aaa;font-size:13px;text-align:center;padding:2rem 1rem;}
 .moniteur-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
-.profil-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;border:0.5px solid #ddd;cursor:pointer;font-size:13px;font-weight:500;color:#555;background:#fafafa;transition:all .15s;}
-.profil-chip:active{transform:scale(.97);}
+.profil-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;border:0.5px solid #ddd;cursor:pointer;font-size:13px;font-weight:500;color:#555;background:#fafafa;transition:all .15s;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;}
+.profil-chip:active{transform:scale(.97);opacity:.8;}
 .hint{font-size:11px;color:#aaa;margin-top:5px;}
 .del-btn{background:none;border:none;cursor:pointer;color:#ccc;padding:2px 6px;font-size:16px;}
 .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:200;}
@@ -382,18 +382,32 @@ function showAdminPanel(){document.getElementById('pin-setup').style.display='no
 function adminLogout(){adminUnlocked=false;document.getElementById('admin-panel').style.display='none';document.getElementById('admin-badge').style.display='none';showAdminLogin();}
 function showAdminLogin(){for(var i=0;i<4;i++)document.getElementById('pl'+i).value='';document.getElementById('pin-error').textContent='';document.getElementById('pin-login').style.display='block';setTimeout(function(){document.getElementById('pl0').focus();},100);}
 
+function makeChipHtml(m, i, isSel){
+  var col=PALETTE[i%PALETTE.length];
+  var style='background:'+col.bg+';border-color:'+(isSel?col.dot:col.border)+';color:'+col.text+';touch-action:manipulation;-webkit-tap-highlight-color:transparent;'+(isSel?'box-shadow:0 0 0 2px '+col.dot+';':'');
+  return '<button class="profil-chip" data-mid="'+escHtml(m.id)+'" style="'+style+';border:0.5px solid '+(isSel?col.dot:col.border)+';font-family:inherit;">'
+    +'<span style="width:10px;height:10px;border-radius:50%;background:'+col.dot+';display:inline-block;flex-shrink:0"></span>'
+    +'<span style="font-size:13px;font-weight:500;">'+escHtml(m.prenom)+' '+escHtml(m.nom)+'</span>'
+    +'</button>';
+}
+
+function bindChips(container){
+  container.querySelectorAll('.profil-chip').forEach(function(btn){
+    btn.addEventListener('click',function(e){
+      e.preventDefault();
+      selectionnerMoniteur(btn.getAttribute('data-mid'));
+    });
+  });
+}
+
 function renderChips(){
   var c=document.getElementById('chips-saisie');
   if(!cache.moniteurs.length){c.innerHTML='<span style="font-size:12px;color:#aaa">Aucun moniteur inscrit.</span>';return;}
   c.innerHTML=cache.moniteurs.map(function(m,i){
-    var col=PALETTE[i%PALETTE.length];
     var isSel=moniteurConnecte&&moniteurConnecte.id===m.id;
-    var style='background:'+col.bg+';border-color:'+(isSel?col.dot:col.border)+';color:'+col.text+';'+(isSel?'box-shadow:0 0 0 2px '+col.dot+';':'');
-    return '<span class="profil-chip" style="'+style+'" onclick="selectionnerMoniteur('+JSON.stringify(m.id)+')">'
-      +'<span style="width:10px;height:10px;border-radius:50%;background:'+col.dot+';display:inline-block;flex-shrink:0"></span>'
-      +'<span style="font-size:13px;font-weight:500;">'+escHtml(m.prenom)+' '+escHtml(m.nom)+'</span>'
-      +'</span>';
+    return makeChipHtml(m,i,isSel);
   }).join('');
+  bindChips(c);
 }
 
 function filtrerChips(val){
@@ -404,14 +418,10 @@ function filtrerChips(val){
   if(!filtered.length){c.innerHTML='<span style="font-size:12px;color:#aaa">Aucun moniteur trouve.</span>';return;}
   c.innerHTML=filtered.map(function(m){
     var i=cache.moniteurs.indexOf(m);
-    var col=PALETTE[i>=0?i%PALETTE.length:0];
     var isSel=moniteurConnecte&&moniteurConnecte.id===m.id;
-    var style='background:'+col.bg+';border-color:'+(isSel?col.dot:col.border)+';color:'+col.text+';'+(isSel?'box-shadow:0 0 0 2px '+col.dot+';':'');
-    return '<span class="profil-chip" style="'+style+'" onclick="selectionnerMoniteur('+JSON.stringify(m.id)+')">'
-      +'<span style="width:10px;height:10px;border-radius:50%;background:'+col.dot+';display:inline-block;flex-shrink:0"></span>'
-      +'<span style="font-size:13px;font-weight:500;">'+escHtml(m.prenom)+' '+escHtml(m.nom)+'</span>'
-      +'</span>';
+    return makeChipHtml(m,i,isSel);
   }).join('');
+  bindChips(c);
 }
 
 function selectionnerMoniteur(id){
