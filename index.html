@@ -10,40 +10,40 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F5F7FA;color:#1a1a1a;min-height:100vh;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F4F9FC;color:#1a1a1a;min-height:100vh;}
 .app{max-width:600px;margin:0 auto;padding:0 0 80px;}
-.header{background:#fff;border-bottom:0.5px solid #e0e0e0;padding:12px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
-.logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#185FA5,#0F6E56);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.app-title{font-size:17px;font-weight:600;color:#1a1a1a;}
-.sync-bar{display:flex;align-items:center;gap:6px;font-size:11px;color:#888;padding:6px 16px;background:#fff;border-bottom:0.5px solid #f0f0f0;}
-.dot{width:7px;height:7px;border-radius:50%;background:#0F6E56;flex-shrink:0;}
+.header{background:#fff;border-bottom:0.5px solid #C8DCE8;padding:12px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
+.logo{width:34px;height:34px;border-radius:10px;background:#3B7EA1;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.app-title{font-size:17px;font-weight:600;color:#1a2630;}
+.sync-bar{display:flex;align-items:center;gap:6px;font-size:11px;color:#888;padding:6px 16px;background:#fff;border-bottom:0.5px solid #D8EAF2;}
+.dot{width:7px;height:7px;border-radius:50%;background:#3B7EA1;flex-shrink:0;}
 .dot.off{background:#E24B4A;}
 .dot.loading{background:#EF9F27;animation:pulse 1s infinite;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
-.tabs{display:flex;background:#fff;border-bottom:0.5px solid #e0e0e0;position:sticky;top:57px;z-index:40;}
-.tab{flex:1;padding:10px 2px;text-align:center;font-size:10px;color:#888;cursor:pointer;border-bottom:2px solid transparent;}
-.tab.active{color:#185FA5;border-bottom-color:#185FA5;font-weight:500;}
+.tabs{display:flex;background:#fff;border-bottom:0.5px solid #C8DCE8;position:sticky;top:57px;z-index:40;}
+.tab{flex:1;padding:10px 2px;text-align:center;font-size:10px;color:#7A9BB0;cursor:pointer;border-bottom:2px solid transparent;}
+.tab.active{color:#3B7EA1;border-bottom-color:#3B7EA1;font-weight:500;}
 .tab i{display:block;font-size:18px;margin-bottom:2px;}
-.section{display:none;padding:16px;}
+.section{display:none;padding:16px;background:#F4F9FC;}
 .section.active{display:block;}
-.card{background:#fff;border:0.5px solid #e8e8e8;border-radius:12px;padding:14px 16px;margin-bottom:12px;}
-label{font-size:12px;color:#666;display:block;margin-bottom:5px;margin-top:11px;}
+.card{background:#fff;border:0.5px solid #C8DCE8;border-radius:12px;padding:14px 16px;margin-bottom:12px;}
+label{font-size:12px;color:#5A7A8E;display:block;margin-bottom:5px;margin-top:11px;}
 label:first-child{margin-top:0;}
-input{width:100%;padding:9px 11px;border-radius:8px;border:0.5px solid #ddd;background:#fafafa;color:#1a1a1a;font-size:14px;-webkit-appearance:none;}
-input:focus{outline:none;border-color:#185FA5;background:#fff;}
+input{width:100%;padding:9px 11px;border-radius:8px;border:0.5px solid #C8DCE8;background:#EEF4F8;color:#1a2630;font-size:14px;-webkit-appearance:none;}
+input:focus{outline:none;border-color:#3B7EA1;background:#fff;}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:8px;border:none;cursor:pointer;font-size:14px;font-weight:500;margin-top:10px;}
-.btn-green{background:#0F6E56;color:#fff;}
-.btn-primary{background:#185FA5;color:#fff;}
-.btn-ghost{background:#f0f0f0;color:#444;}
-.btn-purple{background:#534AB7;color:#fff;}
-.btn-wa{background:#0F6E56;color:#fff;}
-.btn-sms{background:#185FA5;color:#fff;}
+.btn-green{background:#3B7EA1;color:#fff;}
+.btn-primary{background:#3B7EA1;color:#fff;}
+.btn-ghost{background:#EEF4F8;color:#1a2630;}
+.btn-purple{background:#3B7EA1;color:#fff;}
+.btn-wa{background:#3B7EA1;color:#fff;}
+.btn-sms{background:#3B7EA1;color:#fff;}
 .btn-sm{padding:6px 10px;font-size:12px;margin-top:0;}
 .btn-full{width:100%;justify-content:center;}
 .creneaux-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;}
-.cr-btn{padding:9px 10px;border-radius:8px;border:0.5px solid #e0e0e0;background:#fafafa;cursor:pointer;font-size:12px;color:#555;text-align:left;line-height:1.4;}
-.cr-btn.sel{background:#E6F1FB;border-color:#185FA5;color:#0C447C;font-weight:500;}
+.cr-btn{padding:9px 10px;border-radius:8px;border:0.5px solid #e0e0e0;background:#EEF4F8;cursor:pointer;font-size:12px;color:#555;text-align:left;line-height:1.4;}
+.cr-btn.sel{background:#3B7EA1;border-color:#3B7EA1;color:#fff;font-weight:500;}
 .cr-nom{font-size:12px;font-weight:500;display:block;}
 .cr-h{font-size:11px;opacity:.7;}
 .badge{font-size:10px;padding:2px 7px;border-radius:999px;display:inline-block;white-space:nowrap;font-weight:500;}
@@ -57,26 +57,26 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
 .moniteur-card{border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:flex-start;gap:10px;border-width:0.5px;border-style:solid;}
 .tag-nom{font-size:13px;font-weight:600;}
 .tag-d{font-size:11px;margin-top:3px;opacity:.85;}
-.empty{color:#aaa;font-size:13px;text-align:center;padding:2rem 1rem;}
+.empty{color:#7A9BB0;font-size:13px;text-align:center;padding:2rem 1rem;}
 .moniteur-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
-.profil-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;border:0.5px solid #ddd;cursor:pointer;font-size:13px;font-weight:500;color:#555;background:#fafafa;transition:all .15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;-webkit-user-select:none;}
+.profil-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;border:0.5px solid #C8DCE8;cursor:pointer;font-size:13px;font-weight:500;color:#555;background:#fafafa;transition:all .15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;-webkit-user-select:none;}
 .profil-chip:active{transform:scale(.97);opacity:.8;}
-.hint{font-size:11px;color:#aaa;margin-top:5px;}
-.del-btn{background:none;border:none;cursor:pointer;color:#ccc;padding:2px 6px;font-size:16px;}
-.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:200;}
+.hint{font-size:11px;color:#7A9BB0;margin-top:5px;}
+.del-btn{background:none;border:none;cursor:pointer;color:#A8C0CF;padding:2px 6px;font-size:16px;}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1a2630;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:200;}
 .toast.show{opacity:1;}
-.section-title{font-size:16px;font-weight:600;color:#1a1a1a;margin-bottom:14px;}
+.section-title{font-size:16px;font-weight:600;color:#1a2630;margin-bottom:14px;}
 .legend-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
 .legend-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:500;border-width:0.5px;border-style:solid;}
-.moniteur-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:0.5px solid #f0f0f0;}
+.moniteur-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:0.5px solid #D8EAF2;}
 .moniteur-row:last-child{border-bottom:none;}
 .pin-screen{display:flex;flex-direction:column;align-items:center;padding:2rem 1rem;}
 .pin-inputs{display:flex;gap:12px;margin:1.5rem 0;}
-.pin-input{width:48px;height:56px;text-align:center;font-size:22px;font-weight:600;border-radius:10px;border:0.5px solid #ddd;background:#fafafa;color:#1a1a1a;}
-.admin-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 8px;border-radius:999px;background:#EEEDFE;color:#3C3489;border:0.5px solid #AFA9EC;margin-left:8px;}
-.setup-box{background:#E6F1FB;border:0.5px solid #85B7EB;border-radius:10px;padding:12px 14px;margin-bottom:12px;}
+.pin-input{width:48px;height:56px;text-align:center;font-size:22px;font-weight:600;border-radius:10px;border:0.5px solid #C8DCE8;background:#EEF4F8;color:#1a2630;}
+.admin-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 8px;border-radius:999px;background:#EEF4F8;color:#3B7EA1;border:0.5px solid #C8DCE8;margin-left:8px;}
+.setup-box{background:#EEF4F8;border:0.5px solid #C8DCE8;border-radius:10px;padding:12px 14px;margin-bottom:12px;}
 .contact-btns{display:flex;gap:4px;flex-shrink:0;}
-.profil-label{font-size:12px;font-weight:600;color:#185FA5;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+.profil-label{font-size:12px;font-weight:600;color:#3B7EA1;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
 .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:500;display:flex;align-items:flex-end;justify-content:center;}
 .modal-box{background:#fff;border-radius:16px 16px 0 0;padding:20px 16px;width:100%;max-width:600px;max-height:75vh;overflow-y:auto;}
 .modal-msg{background:#f5f5f5;border-radius:10px;padding:12px;font-size:12px;white-space:pre-wrap;line-height:1.6;color:#333;margin:10px 0;max-height:220px;overflow-y:auto;border:0.5px solid #e0e0e0;}
@@ -129,7 +129,7 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
     <div style="text-align:center;margin-bottom:8px;">
       <span id="moniteur-pin-nom" style="font-size:15px;font-weight:600;color:#1a1a1a;"></span>
       <p style="font-size:12px;color:#888;margin-top:6px;">Entre ton code PIN</p>
-      <p style="font-size:11px;color:#aaa;margin-top:2px;">Premier acces ? Choisis ton PIN maintenant.</p>
+      <p style="font-size:11px;color:#7A9BB0;margin-top:2px;">Premier acces ? Choisis ton PIN maintenant.</p>
     </div>
     <div class="pin-inputs" style="justify-content:center;">
       <input class="pin-input" type="password" maxlength="1" inputmode="numeric" id="mp0" oninput="monPinNext(0)"/>
@@ -147,7 +147,7 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
         <div>
           <div style="font-size:11px;color:#888;">Connecte en tant que</div>
-          <span id="moniteur-connecte-nom" style="font-size:15px;font-weight:600;color:#185FA5;"></span>
+          <span id="moniteur-connecte-nom" style="font-size:15px;font-weight:600;color:#3B7EA1;"></span>
         </div>
         <button class="btn btn-ghost btn-sm" onclick="deconnecterMoniteur()" style="margin-top:0;">Changer</button>
       </div>
@@ -233,8 +233,8 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
   </div>
   <div id="pin-setup" style="display:none">
     <div class="setup-box">
-      <p style="font-size:13px;color:#0C447C;font-weight:600;margin-bottom:4px">Premier acces - definissez votre PIN</p>
-      <p style="font-size:12px;color:#185FA5;">Ce code protege l'espace admin. Notez-le !</p>
+      <p style="font-size:13px;color:#1a2630;font-weight:600;margin-bottom:4px">Premier acces - definissez votre PIN</p>
+      <p style="font-size:12px;color:#3B7EA1;">Ce code protege l'espace admin. Notez-le !</p>
     </div>
     <div class="pin-screen">
       <p style="font-size:13px;color:#666;">Choisissez un code PIN a 4 chiffres</p>
@@ -382,8 +382,8 @@ function renderChips(){
     var col=PALETTE[i%PALETTE.length];
     var isSel=moniteurConnecte&&moniteurConnecte.id===m.id;
     var style='background:'+col.bg+';border-color:'+(isSel?col.dot:col.border)+';color:'+col.text+';'+(isSel?'box-shadow:0 0 0 2px '+col.dot+';':'');
-        return '<button class="profil-chip" data-mid="'+m.id+'" style="'+style+';font-family:inherit;">'
-      +'<span style="width:10px;height:10px;border-radius:50%;background:'+col.dot+';display:inline-block;flex-shrink:0"></span>'
+        return '<button class="profil-chip" data-mid="'+m.id+'" style="'+style+';font-family:inherit;border-radius:10px;">'
+      
       +'<span>'+m.prenom+' '+m.nom+'</span>'
       +'</button>';
   }).join('');
@@ -403,8 +403,8 @@ function filtrerChips(val){
     var col=PALETTE[i>=0?i%PALETTE.length:0];
     var isSel=moniteurConnecte&&moniteurConnecte.id===m.id;
     var style='background:'+col.bg+';border-color:'+(isSel?col.dot:col.border)+';color:'+col.text+';'+(isSel?'box-shadow:0 0 0 2px '+col.dot+';':'');
-        return '<button class="profil-chip" data-mid="'+m.id+'" style="'+style+';font-family:inherit;">'
-      +'<span style="width:10px;height:10px;border-radius:50%;background:'+col.dot+';display:inline-block;flex-shrink:0"></span>'
+        return '<button class="profil-chip" data-mid="'+m.id+'" style="'+style+';font-family:inherit;border-radius:10px;">'
+      
       +'<span>'+m.prenom+' '+m.nom+'</span>'
       +'</button>';
   }).join('');
@@ -767,7 +767,7 @@ function renderListeMoniteurs(){
     return '<div class="moniteur-row">'
       +'<div class="avatar" style="width:30px;height:30px;font-size:11px;background:'+col.dot+';">'+ini(m.prenom,m.nom)+'</div>'
       +'<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;">'+m.prenom+' '+m.nom+'</div>'
-      +'<div style="font-size:11px;color:#aaa;">'+(m.tel||'Pas de numero')+'</div></div>'
+      +'<div style="font-size:11px;color:#7A9BB0;">'+(m.tel||'Pas de numero')+'</div></div>'
       +'<button class="btn btn-wa btn-sm" onclick="inviterWA(\''+m.id+'\')" title="WhatsApp"><i class="ti ti-brand-whatsapp"></i></button>'
       +'<button class="btn btn-sms btn-sm" style="margin-left:4px" onclick="inviterSMS(\''+m.id+'\')" title="SMS"><i class="ti ti-message"></i></button>'
       +'<button class="del-btn" onclick="suppMoniteur(\''+m.id+'\')">&#x2715;</button>'
