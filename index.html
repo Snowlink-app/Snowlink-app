@@ -59,7 +59,7 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
 .tag-d{font-size:11px;margin-top:3px;opacity:.85;}
 .empty{color:#aaa;font-size:13px;text-align:center;padding:2rem 1rem;}
 .moniteur-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
-.profil-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;border:0.5px solid #ddd;cursor:pointer;font-size:13px;font-weight:500;color:#555;background:#fafafa;transition:all .15s;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;}
+.profil-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;border:0.5px solid #ddd;cursor:pointer;font-size:13px;font-weight:500;color:#555;background:#fafafa;transition:all .15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;-webkit-user-select:none;}
 .profil-chip:active{transform:scale(.97);opacity:.8;}
 .hint{font-size:11px;color:#aaa;margin-top:5px;}
 .del-btn{background:none;border:none;cursor:pointer;color:#ccc;padding:2px 6px;font-size:16px;}
@@ -109,7 +109,7 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
 </div>
 <div class="tabs">
   <div class="tab active" onclick="showTab('saisie')"><i class="ti ti-calendar-plus"></i>Mes dispo</div>
-  <div class="tab" onclick="showTab('aujourdhui')"><i class="ti ti-sun"></i>Auj.</div>
+  <div class="tab" onclick="showTab('aujourdhui')"><i class="ti ti-sun"></i>Aujourd'hui</div>
   <div class="tab" onclick="showTab('demain')"><i class="ti ti-sun-wind"></i>Demain</div>
   <div class="tab" onclick="showTab('recherche')"><i class="ti ti-search"></i>Chercher</div>
   <div class="tab" onclick="showTab('equipe')"><i class="ti ti-users"></i>Equipe</div>
@@ -121,7 +121,6 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
   <div class="section-title">Mes disponibilites</div>
   <div class="card">
     <div class="profil-label"><i class="ti ti-user"></i> Qui es-tu ?</div>
-    <input type="text" id="filtre-moniteur" placeholder="Tape ton prenom pour te trouver..." oninput="filtrerChips(this.value)" style="margin-bottom:10px;"/>
     <div class="moniteur-chips" id="chips-saisie"></div>
     <p class="hint">Appuie sur ton nom pour te connecter.</p>
   </div>
@@ -315,7 +314,6 @@ function today(){return new Date().toISOString().split('T')[0];}
 function tomorrow(){var d=new Date();d.setDate(d.getDate()+1);return d.toISOString().split('T')[0];}
 function hashPIN(pin){var h=5381;for(var i=0;i<pin.length;i++)h=((h<<5)+h)+pin.charCodeAt(i);return(h>>>0).toString(16);}
 function getGroupeUrl(){return localStorage.getItem('sl_wagroupe')||'';}
-function escHtml(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function isMobile(){return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);}
 
 var selMoniteur=null,selCreneaux=[],rechCr='tous';
@@ -324,11 +322,7 @@ var adminUnlocked=false;
 var moniteurConnecte=null;
 var _msgPartage='';
 
-function setSyncStatus(ok,msg){
-  var dot=document.getElementById('sync-dot');
-  dot.className='dot'+(ok===null?' loading':ok?' ':' off');
-  document.getElementById('sync-label').textContent=msg;
-}
+function setSyncStatus(ok,msg){var dot=document.getElementById('sync-dot');dot.className='dot'+(ok===null?' loading':ok?' ':' off');document.getElementById('sync-label').textContent=msg;}
 
 function sbFetch(path,options){
   options=options||{};
@@ -344,9 +338,7 @@ function sbFetch(path,options){
 }
 
 function supprimerDisposPassees(){
-  var hier=new Date();
-  hier.setDate(hier.getDate()-1);
-  var hierStr=hier.toISOString().split('T')[0];
+  var hier=new Date();hier.setDate(hier.getDate()-1);var hierStr=hier.toISOString().split('T')[0];
   var aSupprimer=cache.dispos.filter(function(d){return d.fin<hierStr;});
   aSupprimer.forEach(function(d){sbFetch('dispos?id=eq.'+d.id,{method:'DELETE'}).catch(function(){});});
   if(aSupprimer.length>0)cache.dispos=cache.dispos.filter(function(d){return d.fin>=hierStr;});
@@ -372,56 +364,31 @@ function loadAll(){
 
 function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2500);}
 function badgeCr(v){var c=CRENEAUX[v];return c?'<span class="badge '+c.cls+'">'+c.nom+'</span>':'';}
-
 function getPINHash(){return localStorage.getItem('sl_pin')||null;}
 function pinSetupNext(i){if(document.getElementById('ps'+i).value&&i<3)document.getElementById('ps'+(i+1)).focus();}
 function pinLoginNext(i){if(document.getElementById('pl'+i).value&&i<3)document.getElementById('pl'+(i+1)).focus();if(i===3&&document.getElementById('pl'+i).value)checkPIN();}
 function savePIN(){var pin='';for(var i=0;i<4;i++)pin+=document.getElementById('ps'+i).value;if(pin.length<4){toast('Entrez 4 chiffres');return;}localStorage.setItem('sl_pin',hashPIN(pin));adminUnlocked=true;showAdminPanel();toast('PIN defini !');}
-function checkPIN(){var pin='';for(var i=0;i<4;i++)pin+=document.getElementById('pl'+i).value;if(hashPIN(pin)===getPINHash()){adminUnlocked=true;showAdminPanel();}else{document.getElementById('pin-error').textContent='Code incorrect.';for(var j=0;j<4;j++){var el=document.getElementById('pl'+j);el.value='';el.style.borderColor='#E24B4A';}document.getElementById('pl0').focus();setTimeout(function(){for(var k=0;k<4;k++)document.getElementById('pl'+k).style.borderColor='';},1500);}}
+function checkPIN(){var pin='';for(var i=0;i<4;i++)pin+=document.getElementById('pl'+i).value;if(hashPIN(pin)===getPINHash()){adminUnlocked=true;showAdminPanel();}else{document.getElementById('pin-error').textContent='Code incorrect.';for(var i=0;i<4;i++){var el=document.getElementById('pl'+i);el.value='';el.style.borderColor='#E24B4A';}document.getElementById('pl0').focus();setTimeout(function(){for(var i=0;i<4;i++)document.getElementById('pl'+i).style.borderColor='';},1500);}}
 function showAdminPanel(){document.getElementById('pin-setup').style.display='none';document.getElementById('pin-login').style.display='none';document.getElementById('admin-panel').style.display='block';document.getElementById('admin-badge').style.display='inline-flex';renderListeMoniteurs();}
 function adminLogout(){adminUnlocked=false;document.getElementById('admin-panel').style.display='none';document.getElementById('admin-badge').style.display='none';showAdminLogin();}
 function showAdminLogin(){for(var i=0;i<4;i++)document.getElementById('pl'+i).value='';document.getElementById('pin-error').textContent='';document.getElementById('pin-login').style.display='block';setTimeout(function(){document.getElementById('pl0').focus();},100);}
 
-function makeChipHtml(m, i, isSel){
-  var col=PALETTE[i%PALETTE.length];
-  var style='background:'+col.bg+';border-color:'+(isSel?col.dot:col.border)+';color:'+col.text+';touch-action:manipulation;-webkit-tap-highlight-color:transparent;'+(isSel?'box-shadow:0 0 0 2px '+col.dot+';':'');
-  return '<button class="profil-chip" data-mid="'+escHtml(m.id)+'" style="'+style+';border:0.5px solid '+(isSel?col.dot:col.border)+';font-family:inherit;">'
-    +'<span style="width:10px;height:10px;border-radius:50%;background:'+col.dot+';display:inline-block;flex-shrink:0"></span>'
-    +'<span style="font-size:13px;font-weight:500;">'+escHtml(m.prenom)+' '+escHtml(m.nom)+'</span>'
-    +'</button>';
-}
-
-function bindChips(container){
-  container.querySelectorAll('.profil-chip').forEach(function(btn){
-    btn.addEventListener('click',function(e){
-      e.preventDefault();
-      selectionnerMoniteur(btn.getAttribute('data-mid'));
-    });
-  });
-}
-
+/* ---- CHIPS : boutons natifs + event listeners pour iOS ---- */
 function renderChips(){
   var c=document.getElementById('chips-saisie');
   if(!cache.moniteurs.length){c.innerHTML='<span style="font-size:12px;color:#aaa">Aucun moniteur inscrit.</span>';return;}
   c.innerHTML=cache.moniteurs.map(function(m,i){
+    var col=PALETTE[i%PALETTE.length];
     var isSel=moniteurConnecte&&moniteurConnecte.id===m.id;
-    return makeChipHtml(m,i,isSel);
+    var style='background:'+col.bg+';border-color:'+(isSel?col.dot:col.border)+';color:'+col.text+';'+(isSel?'box-shadow:0 0 0 2px '+col.dot+';':'');
+    return '<button class="profil-chip" data-mid="'+m.id+'" style="'+style+';font-family:inherit;">'
+      +'<span style="width:10px;height:10px;border-radius:50%;background:'+col.dot+';display:inline-block;flex-shrink:0"></span>'
+      +'<span>'+m.prenom+' '+m.nom+'</span>'
+      +'</button>';
   }).join('');
-  bindChips(c);
-}
-
-function filtrerChips(val){
-  var v=val.toLowerCase().trim();
-  var c=document.getElementById('chips-saisie');
-  if(!cache.moniteurs.length)return;
-  var filtered=v?cache.moniteurs.filter(function(m){return(m.prenom+' '+m.nom).toLowerCase().indexOf(v)>=0;}):cache.moniteurs;
-  if(!filtered.length){c.innerHTML='<span style="font-size:12px;color:#aaa">Aucun moniteur trouve.</span>';return;}
-  c.innerHTML=filtered.map(function(m){
-    var i=cache.moniteurs.indexOf(m);
-    var isSel=moniteurConnecte&&moniteurConnecte.id===m.id;
-    return makeChipHtml(m,i,isSel);
-  }).join('');
-  bindChips(c);
+  c.querySelectorAll('.profil-chip').forEach(function(btn){
+    btn.addEventListener('click',function(e){e.preventDefault();selectionnerMoniteur(btn.getAttribute('data-mid'));});
+  });
 }
 
 function selectionnerMoniteur(id){
@@ -458,9 +425,9 @@ function verifierPinMoniteur(){
     ouvrirFormulaireMoniteur();
   } else {
     document.getElementById('mon-pin-error').textContent='Code incorrect.';
-    for(var j=0;j<4;j++){var el=document.getElementById('mp'+j);el.value='';el.style.borderColor='#E24B4A';}
+    for(var i=0;i<4;i++){var el=document.getElementById('mp'+i);el.value='';el.style.borderColor='#E24B4A';}
     document.getElementById('mp0').focus();
-    setTimeout(function(){for(var k=0;k<4;k++)document.getElementById('mp'+k).style.borderColor='';},1500);
+    setTimeout(function(){for(var i=0;i<4;i++)document.getElementById('mp'+i).style.borderColor='';},1500);
   }
 }
 
@@ -469,8 +436,7 @@ function ouvrirFormulaireMoniteur(){
   document.getElementById('moniteur-pin-box').style.display='none';
   document.getElementById('dispo-form').style.display='block';
   document.getElementById('moniteur-connecte-nom').textContent=moniteurConnecte.prenom+' '+moniteurConnecte.nom;
-  renderChips();
-  renderMesDispos();
+  renderChips();renderMesDispos();
 }
 function annulerSelMoniteur(){selMoniteur=null;document.getElementById('moniteur-pin-box').style.display='none';}
 function deconnecterMoniteur(){moniteurConnecte=null;selMoniteur=null;document.getElementById('dispo-form').style.display='none';document.getElementById('moniteur-pin-box').style.display='none';renderChips();}
@@ -517,8 +483,8 @@ function renderMesDispos(){
     return '<div style="background:'+col.bg+';border:0.5px solid '+col.border+';border-radius:10px;padding:10px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:flex-start;">'
       +'<div><span style="font-size:13px;font-weight:600;color:'+col.text+'">'+fdEffectif(d.debut,d.fin)+'</span>'
       +'<span style="margin-left:4px">'+crs.map(badgeCr).join(' ')+'</span>'
-      +(d.note?'<div style="font-size:11px;color:'+col.text+';opacity:.75;margin-top:2px">'+escHtml(d.note)+'</div>':'')
-      +'</div><button class="del-btn" onclick="suppDispo('+JSON.stringify(d.id)+')">&#x2715;</button></div>';
+      +(d.note?'<div style="font-size:11px;color:'+col.text+';opacity:.75;margin-top:2px">'+d.note+'</div>':'')
+      +'</div><button class="del-btn" onclick="suppDispo(\''+d.id+'\')">&#x2715;</button></div>';
   }).join('');
 }
 
@@ -530,16 +496,26 @@ function suppDispo(id){
 }
 
 function getTel(mid){var m=cache.moniteurs.find(function(x){return x.id===mid;});return m?m.tel||'':'';}
-function contacterWA(tel){tel=(tel||'').replace(/\s/g,'');if(tel)window.open('https://wa.me/'+tel.replace('+',''));else toast('Pas de numero');}
-function contacterSMS(tel){tel=(tel||'').replace(/\s/g,'');if(tel)window.open('sms:'+tel);else toast('Pas de numero');}
+
+/* Boutons contact dans les cards : onclick inline OK car tel ne contient pas d'apostrophe */
+function contacterWA(tel){
+  tel=(tel||'').replace(/\s/g,'');
+  if(!tel){toast('Pas de numero');return;}
+  var url='https://wa.me/'+tel.replace('+','');
+  if(isMobile()){window.location.href=url;}else{window.open(url);}
+}
+function contacterSMS(tel){
+  tel=(tel||'').replace(/\s/g,'');
+  if(!tel){toast('Pas de numero');return;}
+  window.location.href='sms:'+tel;
+}
 
 function contactBtns(mid){
   var tel=getTel(mid);
   if(!tel)return '';
-  var telEsc=tel.replace(/'/g,"\\'");
   return '<div class="contact-btns">'
-    +'<button class="btn btn-wa btn-sm" onclick="contacterWA('+JSON.stringify(tel)+')"><i class="ti ti-brand-whatsapp"></i></button>'
-    +'<button class="btn btn-sms btn-sm" onclick="contacterSMS('+JSON.stringify(tel)+')"><i class="ti ti-message"></i></button>'
+    +'<button class="btn btn-wa btn-sm" onclick="contacterWA(\''+tel+'\')"><i class="ti ti-brand-whatsapp"></i></button>'
+    +'<button class="btn btn-sms btn-sm" onclick="contacterSMS(\''+tel+'\')"><i class="ti ti-message"></i></button>'
     +'</div>';
 }
 
@@ -549,69 +525,21 @@ function moniteurCard(m,dispos){
     +'<div class="avatar" style="width:36px;height:36px;font-size:12px;background:'+col.dot+';">'+ini(m.prenom,m.nom)+'</div>'
     +'<div style="flex:1;">'
     +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">'
-    +'<div class="tag-nom" style="color:'+col.text+'">'+escHtml(m.prenom)+' '+escHtml(m.nom)+'</div>'
+    +'<div class="tag-nom" style="color:'+col.text+'">'+m.prenom+' '+m.nom+'</div>'
     +contactBtns(m.mid)
     +'</div>'
     +dispos.map(function(d){
       var crs=Array.isArray(d.creneaux)?d.creneaux:[];
-      return '<div class="tag-d" style="color:'+col.text+'">'+fdEffectif(d.debut,d.fin)+' '+crs.map(badgeCr).join(' ')+(d.note?' - '+escHtml(d.note):'')+'</div>';
+      return '<div class="tag-d" style="color:'+col.text+'">'+fdEffectif(d.debut,d.fin)+' '+crs.map(badgeCr).join(' ')+(d.note?' - '+d.note:'')+'</div>';
     }).join('')
     +'</div></div>';
-}
-
-/* ---- PARTAGE WHATSAPP : modal sur PC, direct sur mobile ---- */
-function ouvrirPartage(msg){
-  _msgPartage=msg;
-  if(isMobile()){
-    window.open('https://wa.me/?text='+encodeURIComponent(msg));
-    return;
-  }
-  var overlay=document.createElement('div');
-  overlay.className='modal-overlay';
-  overlay.id='share-modal';
-  overlay.innerHTML='<div class="modal-box">'
-    +'<div style="font-size:15px;font-weight:600;margin-bottom:4px;color:#1a1a1a;">Partager sur WhatsApp</div>'
-    +'<p style="font-size:12px;color:#888;margin-bottom:8px;">WhatsApp Web ne supporte pas le pre-remplissage automatique. Copiez le message puis collez-le dans votre conversation.</p>'
-    +'<div class="modal-msg">'+escHtml(msg)+'</div>'
-    +'<div style="display:flex;gap:8px;margin-top:10px;">'
-    +'<button class="btn btn-green" style="flex:1;margin-top:0" onclick="copierMsgPartage()"><i class="ti ti-copy"></i> Copier le message</button>'
-    +'<button class="btn btn-primary" style="flex:1;margin-top:0" onclick="window.open(\'https://web.whatsapp.com\')"><i class="ti ti-brand-whatsapp"></i> Ouvrir WhatsApp Web</button>'
-    +'</div>'
-    +'<button class="btn btn-ghost btn-full" style="margin-top:8px;" onclick="fermerModal()">Fermer</button>'
-    +'</div>';
-  overlay.addEventListener('click',function(e){if(e.target===overlay)fermerModal();});
-  document.body.appendChild(overlay);
-}
-
-function fermerModal(){var m=document.getElementById('share-modal');if(m)m.remove();}
-
-function copierMsgPartage(){
-  if(navigator.clipboard&&navigator.clipboard.writeText){
-    navigator.clipboard.writeText(_msgPartage).then(function(){toast('Message copie !');}).catch(function(){copierFallback();});
-  } else {
-    copierFallback();
-  }
-}
-function copierFallback(){
-  var ta=document.createElement('textarea');
-  ta.value=_msgPartage;
-  ta.style.position='fixed';ta.style.top='-9999px';
-  document.body.appendChild(ta);ta.focus();ta.select();
-  try{document.execCommand('copy');toast('Message copie !');}catch(e){toast('Copiez manuellement le texte ci-dessus');}
-  document.body.removeChild(ta);
 }
 
 function buildWAmsg(dispos,titre){
   var msg='Snowlink - '+titre+'\n\n';
   if(!dispos.length){msg+='Aucune disponibilite.';return msg;}
   var byId={};
-  dispos.forEach(function(d){
-    var k=d.moniteur_id;
-    if(!byId[k])byId[k]={prenom:d.prenom,nom:d.nom,moniteur_id:d.moniteur_id,creneaux:[],notes:[]};
-    var crs=Array.isArray(d.creneaux)?d.creneaux:[];
-    crs.forEach(function(c){if(byId[k].creneaux.indexOf(c)<0)byId[k].creneaux.push(c);});
-    if(d.note)byId[k].notes.push(d.note);
-  });
+  dispos.forEach(function(d){var k=d.moniteur_id;if(!byId[k])byId[k]={prenom:d.prenom,nom:d.nom,moniteur_id:d.moniteur_id,creneaux:[],notes:[]};var crs=Array.isArray(d.creneaux)?d.creneaux:[];crs.forEach(function(c){if(byId[k].creneaux.indexOf(c)<0)byId[k].creneaux.push(c);});if(d.note)byId[k].notes.push(d.note);});
   Object.values(byId).forEach(function(m){
     var tel=getTel(m.moniteur_id);
     msg+='👤 '+m.prenom+' '+m.nom+(tel?' - '+tel:'')+'\n';
@@ -623,22 +551,53 @@ function buildWAmsg(dispos,titre){
   return msg;
 }
 
+/* ---- PARTAGE : location.href sur mobile, modal sur PC ---- */
+function ouvrirPartage(msg){
+  if(isMobile()){
+    window.location.href='https://api.whatsapp.com/send?text='+encodeURIComponent(msg);
+    return;
+  }
+  _msgPartage=msg;
+  var overlay=document.createElement('div');
+  overlay.className='modal-overlay';overlay.id='share-modal';
+  overlay.innerHTML='<div class="modal-box">'
+    +'<div style="font-size:15px;font-weight:600;margin-bottom:4px;">Partager sur WhatsApp</div>'
+    +'<p style="font-size:12px;color:#888;margin-bottom:8px;">Copiez le message puis collez-le dans votre conversation WhatsApp.</p>'
+    +'<div class="modal-msg">'+msg.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</div>'
+    +'<div style="display:flex;gap:8px;margin-top:10px;">'
+    +'<button class="btn btn-green" style="flex:1;margin-top:0" onclick="copierMsg()"><i class="ti ti-copy"></i> Copier</button>'
+    +'<button class="btn btn-primary" style="flex:1;margin-top:0" onclick="window.open(\'https://web.whatsapp.com\')"><i class="ti ti-brand-whatsapp"></i> Ouvrir WhatsApp Web</button>'
+    +'</div>'
+    +'<button class="btn btn-ghost btn-full" style="margin-top:8px;" onclick="fermerModal()">Fermer</button>'
+    +'</div>';
+  overlay.addEventListener('click',function(e){if(e.target===overlay)fermerModal();});
+  document.body.appendChild(overlay);
+}
+function fermerModal(){var m=document.getElementById('share-modal');if(m)m.remove();}
+function copierMsg(){
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(_msgPartage).then(function(){toast('Message copie !');}).catch(copierFallback);
+  }else{copierFallback();}
+}
+function copierFallback(){
+  var ta=document.createElement('textarea');ta.value=_msgPartage;ta.style.position='fixed';ta.style.top='-9999px';
+  document.body.appendChild(ta);ta.focus();ta.select();
+  try{document.execCommand('copy');toast('Message copie !');}catch(e){toast('Copiez manuellement le texte');}
+  document.body.removeChild(ta);
+}
+
 function partagerAujourdhui(){
   var auj=today();
   var dateStr=new Date(auj+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
   var data=cache.dispos.filter(function(d){return d.debut<=auj&&d.fin>=auj;});
-  var msg=buildWAmsg(data,'Dispos du '+dateStr);
-  var url='https://wa.me/?text='+encodeURIComponent(msg);
-  if(isMobile()){window.location.href=url;}else{ouvrirPartage(msg);}
+  ouvrirPartage(buildWAmsg(data,'Dispos du '+dateStr));
 }
 
 function partagerDemain(){
   var dem=tomorrow();
   var dateStr=new Date(dem+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
   var data=cache.dispos.filter(function(d){return d.debut<=dem&&d.fin>=dem;});
-  var msg=buildWAmsg(data,'Dispos de '+dateStr);
-  var url='https://wa.me/?text='+encodeURIComponent(msg);
-  if(isMobile()){window.location.href=url;}else{ouvrirPartage(msg);}
+  ouvrirPartage(buildWAmsg(data,'Dispos de '+dateStr));
 }
 
 function renderAujourdhui(){
@@ -681,20 +640,17 @@ function rechercher(){
   var byId={};
   data.forEach(function(d){var k=d.moniteur_id;if(!byId[k])byId[k]={prenom:d.prenom,nom:d.nom,mid:d.moniteur_id,dispos:[]};byId[k].dispos.push(d);});
   res.innerHTML=Object.values(byId).map(function(m){return moniteurCard(m,m.dispos);}).join('');
-  res.innerHTML+='<div style="margin-top:12px;"><button class="btn btn-wa btn-full" onclick="partagerRecherche('+JSON.stringify(d1)+','+JSON.stringify(d2)+')"><i class="ti ti-brand-whatsapp"></i> Partager ces resultats</button></div>';
+  res.innerHTML+='<div style="margin-top:12px;"><button class="btn btn-wa btn-full" onclick="partagerRecherche(\''+d1+'\',\''+d2+'\')"><i class="ti ti-brand-whatsapp"></i> Partager ces resultats</button></div>';
 }
 
 function partagerRecherche(d1,d2){
   var auj=today();
   var data=cache.dispos.filter(function(d){
-    if(d.fin<auj)return false;
-    if(d.debut>d2||d.fin<d1)return false;
-    return couvre(d.creneaux,rechCr);
+    if(d.fin<auj)return false;if(d.debut>d2||d.fin<d1)return false;return couvre(d.creneaux,rechCr);
   });
   var crNom=rechCr==='tous'?'tous creneaux':(CRENEAUX[rechCr]?CRENEAUX[rechCr].nom:rechCr);
   var titre='Dispos '+fd(d1)+(d1!==d2?' au '+fd(d2):'')+' - '+crNom;
-  var msg=buildWAmsg(data,titre);
-  if(isMobile()){window.location.href='https://wa.me/?text='+encodeURIComponent(msg);}else{ouvrirPartage(msg);}
+  ouvrirPartage(buildWAmsg(data,titre));
 }
 
 function renderEquipe(){
@@ -704,11 +660,10 @@ function renderEquipe(){
   disposFutures.forEach(function(d){if(ids.indexOf(d.moniteur_id)<0)ids.push(d.moniteur_id);});
   var leg=document.getElementById('legende-equipe');
   leg.innerHTML=ids.map(function(id){
-    var m=cache.moniteurs.find(function(x){return x.id===id;});
-    if(!m)return'';
+    var m=cache.moniteurs.find(function(x){return x.id===id;});if(!m)return'';
     var col=getColor(id);
     return '<span class="legend-chip" style="background:'+col.bg+';border-color:'+col.border+';color:'+col.text+';">'
-      +'<span style="width:8px;height:8px;border-radius:50%;background:'+col.dot+';display:inline-block"></span> '+escHtml(m.prenom)+' '+escHtml(m.nom)+'</span>';
+      +'<span style="width:8px;height:8px;border-radius:50%;background:'+col.dot+';display:inline-block"></span> '+m.prenom+' '+m.nom+'</span>';
   }).join('');
   var el=document.getElementById('vue-equipe');
   if(!disposFutures.length){el.innerHTML='<div class="empty">Aucune disponibilite a venir.</div>';return;}
@@ -720,14 +675,11 @@ function renderEquipe(){
 function buildInviteMsg(m){
   var url=localStorage.getItem('sl_appurl')||APP_URL;
   var groupeUrl=getGroupeUrl();
-  var msg='Bonjour '+m.prenom+' !\n\n';
-  msg+='Tu es invite(e) a rejoindre Snowlink !\n\n';
-  msg+='Acces application :\n'+url+'\n\n';
-  if(groupeUrl){msg+='Groupe WhatsApp :\n'+groupeUrl+'\n\n';}
+  var msg='Bonjour '+m.prenom+' !\n\nTu es invite(e) a rejoindre Snowlink !\n\n📱 *Application :*\n'+url+'\n\n';
+  if(groupeUrl){msg+='💬 *Groupe WhatsApp :*\n'+groupeUrl+'\n\n';}
   msg+='Rejoins-nous vite !';
   return msg;
 }
-
 function buildInviteGroupeMsg(m){
   var groupeUrl=getGroupeUrl();
   if(!groupeUrl)return null;
@@ -735,20 +687,17 @@ function buildInviteGroupeMsg(m){
 }
 
 function inviterWA(id){
-  var m=cache.moniteurs.find(function(x){return x.id===id;});
-  if(!m)return;
+  var m=cache.moniteurs.find(function(x){return x.id===id;});if(!m)return;
   var msg=buildInviteMsg(m);
   var num=(m.tel||'').replace(/\s/g,'');
-  var url=num?'https://wa.me/'+num.replace('+','')+'?text='+encodeURIComponent(msg):'https://wa.me/?text='+encodeURIComponent(msg);
-  window.open(url);
+  var url=num?'https://wa.me/'+num.replace('+','')+'?text='+encodeURIComponent(msg):'https://api.whatsapp.com/send?text='+encodeURIComponent(msg);
+  if(isMobile()){window.location.href=url;}else{window.open(url);}
 }
-
 function inviterSMS(id){
-  var m=cache.moniteurs.find(function(x){return x.id===id;});
-  if(!m)return;
+  var m=cache.moniteurs.find(function(x){return x.id===id;});if(!m)return;
   var msg=buildInviteMsg(m);
   var num=(m.tel||'').replace(/\s/g,'');
-  window.open('sms:'+num+'?body='+encodeURIComponent(msg));
+  window.location.href='sms:'+num+'?body='+encodeURIComponent(msg);
 }
 
 function ajouterMoniteur(){
@@ -763,9 +712,7 @@ function ajouterMoniteur(){
   sbFetch('moniteurs',{method:'POST',body:JSON.stringify(row)}).then(function(){
     cache.moniteurs.push(row);
     setSyncStatus(true,'Snowlink synchronise');
-    document.getElementById('m-prenom').value='';
-    document.getElementById('m-nom').value='';
-    document.getElementById('m-tel').value='';
+    document.getElementById('m-prenom').value='';document.getElementById('m-nom').value='';document.getElementById('m-tel').value='';
     toast(p+' '+n+' ajoute !');
     renderListeMoniteurs();renderChips();
   }).catch(function(e){setSyncStatus(false,'Erreur: '+e.message);});
@@ -784,8 +731,7 @@ function suppMoniteur(id){
 }
 
 function saveConfig(){
-  var url=document.getElementById('app-url').value.trim();
-  localStorage.setItem('sl_appurl',url);
+  localStorage.setItem('sl_appurl',document.getElementById('app-url').value.trim());
   var waUrl=document.getElementById('wa-groupe-url').value.trim();
   if(waUrl)localStorage.setItem('sl_wagroupe',waUrl);
   toast('Configuration enregistree !');
@@ -798,11 +744,11 @@ function renderListeMoniteurs(){
     var col=PALETTE[i%PALETTE.length];
     return '<div class="moniteur-row">'
       +'<div class="avatar" style="width:30px;height:30px;font-size:11px;background:'+col.dot+';">'+ini(m.prenom,m.nom)+'</div>'
-      +'<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;">'+escHtml(m.prenom)+' '+escHtml(m.nom)+'</div>'
+      +'<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;">'+m.prenom+' '+m.nom+'</div>'
       +'<div style="font-size:11px;color:#aaa;">'+(m.tel||'Pas de numero')+'</div></div>'
-      +'<button class="btn btn-wa btn-sm" onclick="inviterWA('+JSON.stringify(m.id)+')" title="WhatsApp"><i class="ti ti-brand-whatsapp"></i></button>'
-      +'<button class="btn btn-sms btn-sm" style="margin-left:4px" onclick="inviterSMS('+JSON.stringify(m.id)+')" title="SMS"><i class="ti ti-message"></i></button>'
-      +'<button class="del-btn" onclick="suppMoniteur('+JSON.stringify(m.id)+')">&#x2715;</button>'
+      +'<button class="btn btn-wa btn-sm" onclick="inviterWA(\''+m.id+'\')" title="WhatsApp"><i class="ti ti-brand-whatsapp"></i></button>'
+      +'<button class="btn btn-sms btn-sm" style="margin-left:4px" onclick="inviterSMS(\''+m.id+'\')" title="SMS"><i class="ti ti-message"></i></button>'
+      +'<button class="del-btn" onclick="suppMoniteur(\''+m.id+'\')">&#x2715;</button>'
       +'</div>';
   }).join('');
 }
@@ -816,7 +762,7 @@ function showTab(name){
   if(name==='equipe'){setSyncStatus(null,'Actualisation...');loadAll().then(function(){renderEquipe();});}
   if(name==='aujourdhui'){setSyncStatus(null,'Actualisation...');loadAll().then(function(){renderAujourdhui();});}
   if(name==='demain'){setSyncStatus(null,'Actualisation...');loadAll().then(function(){renderDemain();});}
-  if(name==='saisie'){var f=document.getElementById('filtre-moniteur');if(f)f.value='';renderChips();}
+  if(name==='saisie'){renderChips();}
   if(name==='admin'){
     if(adminUnlocked){showAdminPanel();return;}
     var hasPIN=getPINHash();
@@ -828,14 +774,10 @@ function showTab(name){
 }
 
 var t=today();
-document.getElementById('s-debut').value=t;
-document.getElementById('s-fin').value=t;
-document.getElementById('r-debut').value=t;
-document.getElementById('r-fin').value=t;
-var savedUrl=localStorage.getItem('sl_appurl');
-if(savedUrl)document.getElementById('app-url').value=savedUrl;
-var savedWaGroupe=localStorage.getItem('sl_wagroupe');
-if(savedWaGroupe)document.getElementById('wa-groupe-url').value=savedWaGroupe;
+document.getElementById('s-debut').value=t;document.getElementById('s-fin').value=t;
+document.getElementById('r-debut').value=t;document.getElementById('r-fin').value=t;
+var savedUrl=localStorage.getItem('sl_appurl');if(savedUrl)document.getElementById('app-url').value=savedUrl;
+var savedWaGroupe=localStorage.getItem('sl_wagroupe');if(savedWaGroupe)document.getElementById('wa-groupe-url').value=savedWaGroupe;
 loadAll();
 </script>
 </body>
