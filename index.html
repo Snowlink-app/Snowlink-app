@@ -121,6 +121,7 @@ input:focus{outline:none;border-color:#185FA5;background:#fff;}
   <div class="section-title">Mes disponibilites</div>
   <div class="card">
     <div class="profil-label"><i class="ti ti-user"></i> Qui es-tu ?</div>
+    <input type="text" id="filtre-moniteur" placeholder="Tape ton prenom..." oninput="filtrerChips(this.value)" style="margin-bottom:10px;"/>
     <div class="moniteur-chips" id="chips-saisie"></div>
     <p class="hint">Appuie sur ton nom pour te connecter.</p>
   </div>
@@ -381,7 +382,28 @@ function renderChips(){
     var col=PALETTE[i%PALETTE.length];
     var isSel=moniteurConnecte&&moniteurConnecte.id===m.id;
     var style='background:'+col.bg+';border-color:'+(isSel?col.dot:col.border)+';color:'+col.text+';'+(isSel?'box-shadow:0 0 0 2px '+col.dot+';':'');
-    return '<button class="profil-chip" data-mid="'+m.id+'" style="'+style+';font-family:inherit;">'
+        return '<button class="profil-chip" data-mid="'+m.id+'" style="'+style+';font-family:inherit;">'
+      +'<span style="width:10px;height:10px;border-radius:50%;background:'+col.dot+';display:inline-block;flex-shrink:0"></span>'
+      +'<span>'+m.prenom+' '+m.nom+'</span>'
+      +'</button>';
+  }).join('');
+  c.querySelectorAll('.profil-chip').forEach(function(btn){
+    btn.addEventListener('click',function(e){e.preventDefault();selectionnerMoniteur(btn.getAttribute('data-mid'));});
+  });
+}
+
+function filtrerChips(val){
+  var v=val.toLowerCase().trim();
+  var c=document.getElementById('chips-saisie');
+  if(!cache.moniteurs.length)return;
+  var filtered=v?cache.moniteurs.filter(function(m){return(m.prenom+' '+m.nom).toLowerCase().indexOf(v)>=0;}):cache.moniteurs;
+  if(!filtered.length){c.innerHTML='<span style="font-size:12px;color:#aaa">Aucun moniteur trouve.</span>';return;}
+  c.innerHTML=filtered.map(function(m){
+    var i=cache.moniteurs.indexOf(m);
+    var col=PALETTE[i>=0?i%PALETTE.length:0];
+    var isSel=moniteurConnecte&&moniteurConnecte.id===m.id;
+    var style='background:'+col.bg+';border-color:'+(isSel?col.dot:col.border)+';color:'+col.text+';'+(isSel?'box-shadow:0 0 0 2px '+col.dot+';':'');
+        return '<button class="profil-chip" data-mid="'+m.id+'" style="'+style+';font-family:inherit;">'
       +'<span style="width:10px;height:10px;border-radius:50%;background:'+col.dot+';display:inline-block;flex-shrink:0"></span>'
       +'<span>'+m.prenom+' '+m.nom+'</span>'
       +'</button>';
@@ -762,7 +784,7 @@ function showTab(name){
   if(name==='equipe'){setSyncStatus(null,'Actualisation...');loadAll().then(function(){renderEquipe();});}
   if(name==='aujourdhui'){setSyncStatus(null,'Actualisation...');loadAll().then(function(){renderAujourdhui();});}
   if(name==='demain'){setSyncStatus(null,'Actualisation...');loadAll().then(function(){renderDemain();});}
-  if(name==='saisie'){renderChips();}
+  if(name==='saisie'){var f=document.getElementById('filtre-moniteur');if(f)f.value='';renderChips();}
   if(name==='admin'){
     if(adminUnlocked){showAdminPanel();return;}
     var hasPIN=getPINHash();
