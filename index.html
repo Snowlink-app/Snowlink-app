@@ -626,7 +626,7 @@ function partagerDemain(){
 function renderAujourdhui(){
   var auj=today();
   var dateStr=new Date(auj+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
-  document.getElementById('titre-aujourdhui').innerHTML='<div style="background:#3B7EA1;margin:-16px -16px 14px -16px;padding:12px 16px;border-radius:0;"><div style="font-size:17px;font-weight:600;color:#fff;">Aujourd'hui</div><div style="font-size:12px;color:rgba(255,255,255,.75);margin-top:2px;">Dispos · '+dateStr+'</div></div>';
+  document.getElementById('titre-aujourdhui').innerHTML='<div style="background:#3B7EA1;margin:-16px -16px 14px -16px;padding:12px 16px;border-radius:0;"><div style="font-size:17px;font-weight:600;color:#fff;">Aujourd’hui</div><div style="font-size:12px;color:rgba(255,255,255,.75);margin-top:2px;">Dispos · '+dateStr+'</div></div>';
   var data=cache.dispos.filter(function(d){return d.debut<=auj&&d.fin>=auj;});
   var el=document.getElementById('dispos-aujourdhui');
   if(!data.length){el.innerHTML='<div class="empty">Aucune disponibilite ce jour.</div>';document.getElementById('aujourdhui-partager').style.display='none';return;}
